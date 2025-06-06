@@ -956,7 +956,317 @@ Many JS questions around **counters**, **timers**, **currying**, and **modules**
 
 ---
 
-## 11. [Coding] Implement a polyfill for `Function.prototype.call`
+## 11. [Coding] Implement a function that returns another function (Currying)
+
+---
+
+### Problem Statement
+
+Currying is a functional programming technique where a function with multiple arguments is transformed into a series of functions that each take **one argument at a time**.
+
+Your task is to implement a curried function that:
+
+- Takes one number at a time
+- Returns a function for each new argument
+- Finally returns the sum of all numbers **when no argument is passed**
+
+---
+
+### Example Usage
+
+```js
+add(2)(3)(4)(); // 9
+add(1)(-2)(3)(4)(); // 6
+add(); // 0
+```
+
+---
+
+### Step-by-Step Thinking
+
+#### Step 1: Understand the desired behavior
+
+You want a function `add` that:
+
+- Returns another function for each argument
+- Keeps accumulating the total
+- Stops when called **without an argument** (i.e. `()`)
+
+This is a classic use-case for closures — we need to retain state (`sum`) across function calls.
+
+---
+
+#### Step 2: Use Closure to Store the Running Total
+
+We wrap the logic in an inner function and **return that same function recursively** until an empty call is made.
+
+---
+
+### Final Code
+
+```js
+function add(num) {
+  let sum = 0;
+
+  function inner(next) {
+    if (next === undefined) return sum;
+    sum += next;
+    return inner;
+  }
+
+  return num === undefined ? 0 : inner(num);
+}
+```
+
+---
+
+### How it Works
+
+1. The outer `add()` starts the process.
+2. Each call with a number accumulates to `sum`.
+3. When `()` is called with `undefined`, we return the accumulated `sum`.
+
+---
+
+### Tips & Patterns
+
+| Pattern        | Insight                                    |
+| -------------- | ------------------------------------------ |
+| Closure        | Retain `sum` across function calls         |
+| Recursion      | Return the same function until base case   |
+| Flexible Arity | Supports chaining of arguments dynamically |
+
+---
+
+### Common Interview Variants
+
+- Create a curried function that accepts `N` parameters over multiple calls.
+- Write a curry utility for `f(a, b, c)` so it can be called like `curry(f)(a)(b)(c)`.
+- Extend to support infinite chaining: `add(1)(2)(3)...().valueOf()`
+
+---
+
+### Practice Challenge
+
+Extend the logic so the user can call `.value()` instead of `()`:
+
+```js
+add(1)(2)(3).value(); // 6
+```
+
+You’ll need to return an object with a `value()` method or override `.toString()` or `.valueOf()` for clean coercion.
+
+---
+
+## 12. [Theory] How does `this` behave in regular vs. arrow functions?
+
+---
+
+### Short Answer
+
+- **Regular functions:** `this` is **dynamic**, determined by **how the function is called**.
+- **Arrow functions:** `this` is **lexically bound**, i.e., it inherits `this` from the **surrounding scope** where it was defined.
+
+---
+
+### Explanation with Example
+
+#### 1. Regular Function Example
+
+```js
+const user = {
+  name: "Ayush",
+  sayHi: function () {
+    console.log("Hi,", this.name);
+  },
+};
+
+user.sayHi(); // Hi, Ayush
+```
+
+Here, `this` refers to the `user` object because the function is called using `user.sayHi()`.
+
+---
+
+#### 2. Arrow Function Example
+
+```js
+const user = {
+  name: "Ayush",
+  sayHi: () => {
+    console.log("Hi,", this.name);
+  },
+};
+
+user.sayHi(); // Hi, undefined
+```
+
+Here, `this` does **not** refer to `user` — it refers to the `this` of the outer scope (usually `window` or `undefined` in strict mode). That’s why we get `undefined`.
+
+---
+
+### Comparison Table
+
+| Feature                 | Regular Function                         | Arrow Function                           |
+| ----------------------- | ---------------------------------------- | ---------------------------------------- |
+| `this` binding          | Dynamic (based on call-site)             | Lexical (based on surrounding scope)     |
+| Can be used as method?  | Yes                                      | Usually no (loses correct `this`)        |
+| `new` constructible?    | Yes                                      | No (throws error)                        |
+| Suitable for callbacks? | Depends — use `.bind()` or arrow instead | Yes — especially in `setTimeout`, `.map` |
+
+---
+
+### Real-World Bug Example
+
+```js
+function Timer() {
+  this.seconds = 0;
+
+  setInterval(function () {
+    this.seconds++;
+    console.log(this.seconds);
+  }, 1000);
+}
+
+new Timer(); // NaN or TypeError
+```
+
+- Inside the regular function, `this` refers to `window`, not the `Timer` instance.
+
+✅ Fix it with arrow function:
+
+```js
+function Timer() {
+  this.seconds = 0;
+
+  setInterval(() => {
+    this.seconds++;
+    console.log(this.seconds);
+  }, 1000);
+}
+```
+
+---
+
+### Pro Interview Insight
+
+Use arrow functions:
+
+- When you want to **inherit** `this` from parent scope (e.g., event handlers inside class methods or closures).
+- When used as **callback functions** inside methods where traditional `function()` would lose `this`.
+
+Avoid arrow functions:
+
+- When you need a **method** that relies on object context.
+- When you want to use the function as a **constructor** (they can’t be used with `new`).
+
+---
+
+### Summary
+
+```js
+const obj = {
+  name: "JS",
+  regular: function () {
+    console.log(this.name);
+  },
+  arrow: () => {
+    console.log(this.name);
+  },
+};
+
+obj.regular(); // "JS"
+obj.arrow(); // undefined
+```
+
+- Regular: `this` → `obj`
+- Arrow: `this` → outer scope (not `obj`)
+
+---
+
+## 13. [Coding] Implement a polyfill for `Function.prototype.bind`
+
+---
+
+### Problem Statement
+
+Create a polyfill for the `bind` method, called `myBind`, that:
+
+- Returns a new function
+- When called, calls the original function with a specified `this` context
+- Optionally pre-fills arguments (partial application)
+- Preserves proper `this` binding when used with `new` (advanced case — optional)
+
+---
+
+### Examples
+
+```js
+function greet(greeting, punctuation) {
+  return `${greeting}, my name is ${this.name}${punctuation}`;
+}
+
+const person = { name: "Ayush" };
+const greetAyush = greet.bind(person, "Hello");
+
+greetAyush("!"); // "Hello, my name is Ayush!"
+```
+
+---
+
+### Step-by-Step Breakdown
+
+---
+
+**Step 1: Understand how `bind` differs from `call`**
+
+- `call`/`apply` invoke the function immediately
+- `bind` returns a **new function** with `this` and optionally some arguments **pre-bound**
+
+```js
+const bound = fn.bind(obj, preArg1);
+bound(extraArg); // calls fn with obj and both args
+```
+
+---
+
+**Step 2: Extend `Function.prototype`**
+
+```js
+Function.prototype.myBind = function (thisArg, ...presetArgs) {
+  // returns a new function
+};
+```
+
+Here, `this` is the original function, `thisArg` is the context, and `presetArgs` are the first set of arguments.
+
+---
+
+**Step 3: Return a new function** ( Read slowly and carefully. Read again if not clear at once)
+
+This new function:
+
+- Accepts more arguments
+- Calls the original function with both preset and new arguments
+- Uses `call` or `apply` to enforce context binding
+
+---
+
+**Final Implementation**
+
+```js
+Function.prototype.myBind = function (thisArg, ...presetArgs) {
+  const originalFn = this;
+
+  return function (...laterArgs) {
+    return originalFn.call(thisArg, ...presetArgs, ...laterArgs);
+  };
+};
+```
+
+---
+
+## 14. [Coding] Implement a polyfill for `Function.prototype.call`
 
 ---
 
@@ -1080,91 +1390,584 @@ Function.prototype.myCall = function (thisArg, ...args) {
 
 ---
 
-## 12. [Coding] Implement a polyfill for `Function.prototype.bind`
+### Tips and Patterns to Remember
+
+- `bind` is used for **partial application** and **context preservation**
+- `bind` **does not execute immediately** — it returns a new callable function
+
+---
+
+# Section 4: Objects, Prototypes, and Inheritance
+
+## 15. [Theory] How does prototypal inheritance work in JavaScript?
+
+---
+
+### Introduction
+
+JavaScript uses **prototypal inheritance** — an object can inherit properties and methods from another object via a prototype chain.
+
+Instead of classical inheritance (like in Java, C++), where classes inherit from other classes, JavaScript allows **objects to inherit directly from other objects**.
+
+---
+
+### Core Concepts
+
+#### 1. Every object has an internal `[[Prototype]]`
+
+This is accessible via:
+
+- `Object.getPrototypeOf(obj)` (modern way)
+- `obj.__proto__` (legacy, not recommended)
+
+#### 2. Prototype Chain
+
+When you try to access a property on an object:
+
+- JavaScript first looks for the property directly on the object.
+- If not found, it looks up the prototype chain until it finds the property or reaches `null`.
+
+```js
+const parent = { greeting: "Hello" };
+const child = Object.create(parent);
+
+console.log(child.greeting); // "Hello"
+```
+
+Here, `child` doesn’t have `greeting`, so JS looks in `parent`.
+
+---
+
+### Constructor Functions and `.prototype`
+
+Functions in JavaScript have a special property called `.prototype`. When used with `new`, it sets the prototype of the created object.
+
+```js
+function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.sayHi = function () {
+  return `Hi, I am ${this.name}`;
+};
+
+const p1 = new Person("Ayush");
+console.log(p1.sayHi()); // "Hi, I am Ayush"
+```
+
+Here:
+
+- `p1.__proto__ === Person.prototype` → true
+- `p1.sayHi()` is found on `Person.prototype`
+
+---
+
+### Prototype Chain Example
+
+```js
+const grandParent = { gpProp: "GP" };
+const parent = Object.create(grandParent);
+parent.pProp = "P";
+
+const child = Object.create(parent);
+child.cProp = "C";
+
+console.log(child.cProp); // "C" (own property)
+console.log(child.pProp); // "P" (inherited from parent)
+console.log(child.gpProp); // "GP" (inherited from grandparent)
+```
+
+---
+
+### Object.create vs Class
+
+Both achieve inheritance, but differ in syntax:
+
+```js
+// Using Object.create
+const parent = {
+  greet() {
+    return "Hi";
+  },
+};
+const child = Object.create(parent);
+
+// Using ES6 class
+class A {
+  greet() {
+    return "Hi";
+  }
+}
+class B extends A {}
+
+const b = new B();
+```
+
+Under the hood, classes still use prototypes. The `class` syntax is syntactic sugar over the prototype-based system.
+
+---
+
+### Summary
+
+- JS uses a **prototype chain** to share behavior across objects.
+- Inheritance is **delegation-based**, not copy-based.
+- All objects ultimately inherit from `Object.prototype` (unless created with `Object.create(null)`).
+- Prototypal inheritance allows flexible and powerful object composition.
+
+---
+
+## 16. [Theory] What’s the difference between `__proto__`, `prototype`, and `constructor`?
+
+---
+
+JavaScript has multiple ways to connect and extend objects. These three — `__proto__`, `prototype`, and `constructor` — are often confused because they all relate to inheritance and object creation.
+
+Let's break them down.
+
+---
+
+### 1. `__proto__` (aka `[[Prototype]]`)
+
+- This is an **internal reference** to the prototype of an object.
+- Every object (except the root object) has it.
+- It forms the **prototype chain** — how JavaScript performs inheritance.
+
+```js
+const person = { name: "Ayush" };
+const student = Object.create(person);
+
+console.log(student.__proto__ === person); // true
+```
+
+- **Modern & recommended way**: use `Object.getPrototypeOf(obj)` and `Object.setPrototypeOf(obj, proto)`
+- `__proto__` is **legacy**, though still widely used.
+
+---
+
+### 2. `.prototype`
+
+- This is a property **only on constructor functions** and **classes**.
+- It is **not** present on regular objects.
+- When a function is used as a constructor with `new`, the created object's `__proto__` is set to the constructor’s `.prototype`.
+
+```js
+function Animal(name) {
+  this.name = name;
+}
+
+Animal.prototype.sayHi = function () {
+  return `Hi, I am ${this.name}`;
+};
+
+const a1 = new Animal("Leo");
+
+console.log(a1.__proto__ === Animal.prototype); // true
+```
+
+So, `.prototype` defines the prototype for all instances created with `new`.
+
+---
+
+### 3. `constructor`
+
+- The `constructor` is a **property on the prototype** object.
+- It points back to the function that created the instance.
+
+```js
+console.log(a1.constructor === Animal); // true
+```
+
+- You can use it to recreate objects or check types (with caution).
+
+---
+
+### Putting it All Together
+
+```js
+function Foo() {}
+const obj = new Foo();
+
+// Relationships:
+obj.__proto__ === Foo.prototype; // true
+Foo.prototype.constructor === Foo; // true
+Object.getPrototypeOf(obj) === Foo.prototype; // true
+```
+
+---
+
+### Visual Summary
+
+```
+Function: Foo
+|
+|-- Foo.prototype  --> { constructor: Foo }
+      |
+      |-- used as prototype for
+            ↓
+        obj.__proto__
+```
+
+---
+
+### Summary Table
+
+| Term          | Belongs To      | Purpose                                                      |
+| ------------- | --------------- | ------------------------------------------------------------ |
+| `__proto__`   | Every object    | Points to prototype of object (forms inheritance chain)      |
+| `prototype`   | Constructor Fn  | Defines shared props/methods for instances created via `new` |
+| `constructor` | On `.prototype` | Points back to function/class that created the object        |
+
+---
+
+### Important Notes
+
+- **Modifying `.prototype`** affects all future instances.
+- **Changing `__proto__`** can be done at runtime, but is discouraged due to performance costs.
+- Use **`Object.create()`** or **class syntax** for clean inheritance.
+
+---
+
+## 17. [Coding] Create your own version of `Object.create()` using constructor function
 
 ---
 
 ### Problem Statement
 
-Create a polyfill for the `bind` method, called `myBind`, that:
+You are given a task to **simulate the behavior of `Object.create(proto)`**.
 
-- Returns a new function
-- When called, calls the original function with a specified `this` context
-- Optionally pre-fills arguments (partial application)
-- Preserves proper `this` binding when used with `new` (advanced case — optional)
+This means:  
+You need to create a new object such that the **prototype of the new object is the object passed in** (`proto`).
 
 ---
 
-### Examples
+### Real-Life Analogy
 
-```js
-function greet(greeting, punctuation) {
-  return `${greeting}, my name is ${this.name}${punctuation}`;
-}
-
-const person = { name: "Ayush" };
-const greetAyush = greet.bind(person, "Hello");
-
-greetAyush("!"); // "Hello, my name is Ayush!"
-```
+Think of `proto` as a **blueprint** or **parent**.  
+You want to create a **child object** that **inherits from this parent**, without copying the properties — just inheriting them.
 
 ---
 
 ### Step-by-Step Breakdown
 
----
+#### Step 1: What does `Object.create(proto)` do?
 
-**Step 1: Understand how `bind` differs from `call`**
-
-- `call`/`apply` invoke the function immediately
-- `bind` returns a **new function** with `this` and optionally some arguments **pre-bound**
+When you call:
 
 ```js
-const bound = fn.bind(obj, preArg1);
-bound(extraArg); // calls fn with obj and both args
+const child = Object.create(parent);
+```
+
+You're not copying `parent`, you're just saying:
+
+> “Make a new empty object, but whenever this new object doesn’t have a property, go ask `parent`.”
+
+So internally, this new object’s **`__proto__` is set to `parent`**.
+
+---
+
+#### Step 2: Can we do this without `Object.create()`?
+
+Yes! JavaScript gives us a way to set the `__proto__` of an object using **constructor functions**.
+
+---
+
+### Our Plan:
+
+1. Create a temporary constructor function.
+2. Set the prototype of this constructor to `proto`.
+3. Return a new object using `new`, which links `__proto__` to `proto`.
+
+---
+
+### Code Implementation
+
+```js
+function customCreate(proto) {
+  function Temp() {} // Step 1: Temporary constructor
+  Temp.prototype = proto; // Step 2: Link prototype
+  return new Temp(); // Step 3: Create new object
+}
 ```
 
 ---
 
-**Step 2: Extend `Function.prototype`**
+### 🧪 Example Usage
 
 ```js
-Function.prototype.myBind = function (thisArg, ...presetArgs) {
-  // returns a new function
+const parent = {
+  sayHi() {
+    return "Hi from parent!";
+  },
 };
+
+const child = customCreate(parent);
+
+console.log(child.sayHi()); // Hi from parent!
+console.log(child.__proto__ === parent); // true
 ```
 
-Here, `this` is the original function, `thisArg` is the context, and `presetArgs` are the first set of arguments.
+---
+
+### Summary
+
+| Feature                    | `Object.create()` | `customCreate()` |
+| -------------------------- | ----------------- | ---------------- |
+| Links to prototype         | Yes               | Yes              |
+| Copies properties          | No                | No               |
+| Uses constructor hack      | Native            | Yes              |
+| Works in ES3/ES5 and above | Yes               | Yes              |
 
 ---
 
-**Step 3: Return a new function** ( Read slowly and carefully. Read again if not clear at once)
-
-This new function:
-
-- Accepts more arguments
-- Calls the original function with both preset and new arguments
-- Uses `call` or `apply` to enforce context binding
+> So the idea is simple: use a function to create an empty object, and link it to the object you want to use as the prototype.
 
 ---
 
-**Final Implementation**
+## 18. [Theory] What is the difference between shallow and deep copy?
+
+---
+
+### What is a copy in JavaScript?
+
+In JavaScript, when we copy an object or array, we either create a **new reference** that still points to the same nested values (shallow), or we recursively copy all nested values and create a fully independent structure (deep).
+
+---
+
+### Shallow Copy
+
+A **shallow copy** means:
+
+- The first level of the object is copied.
+- Nested objects or arrays are **still referenced** — not cloned.
+
+#### Example:
 
 ```js
-Function.prototype.myBind = function (thisArg, ...presetArgs) {
-  const originalFn = this;
-
-  return function (...laterArgs) {
-    return originalFn.call(thisArg, ...presetArgs, ...laterArgs);
-  };
+const original = {
+  name: "Ayush",
+  address: {
+    city: "Pune",
+  },
 };
+
+const shallow = { ...original };
+
+shallow.name = "Raj"; // ✅ Only updates shallow.name
+shallow.address.city = "Delhi"; // ❗ Affects original.address.city too
+
+console.log(original.address.city); // "Delhi"
+```
+
+#### Why?
+
+Because `shallow.address` points to the **same object in memory** as `original.address`.
+
+---
+
+### Deep Copy
+
+A **deep copy** means:
+
+- Every level of nested structure is copied.
+- There are no shared references between the original and the copy.
+
+#### Example:
+
+```js
+const original = {
+  name: "Ayush",
+  address: {
+    city: "Pune",
+  },
+};
+
+const deep = JSON.parse(JSON.stringify(original)); // simple deep copy (not perfect)
+
+deep.address.city = "Delhi";
+
+console.log(original.address.city); // "Pune" — not affected
+```
+
+This deep copy is **independent**, so changing `deep.address.city` does **not** affect the original.
+
+> Note: `JSON.parse(JSON.stringify(...))` has limitations — it doesn’t handle `undefined`, `functions`, `symbols`, or circular references.
+
+---
+
+### Summary Table
+
+| Feature                | Shallow Copy                             | Deep Copy                            |
+| ---------------------- | ---------------------------------------- | ------------------------------------ |
+| Nested objects copied? | ❌ No (shared references)                | ✅ Yes (recursively copied)          |
+| Performance            | Fast                                     | Slower (recursive copying)           |
+| Tools / Methods        | `Object.assign()`, spread `...`          | `structuredClone()`, recursion, libs |
+| Risk                   | Changes to nested values affect original | Safe, fully independent              |
+
+---
+
+### Interview Tip
+
+If you're unsure whether a method makes a shallow or deep copy:
+
+- Ask yourself: _"If I modify a nested object, will it affect the original?"_
+- If **yes**, it's a shallow copy.
+- If **no**, it's a deep copy.
+
+---
+
+## 19. [Coding] Implement a deep clone utility without using `structuredClone`
+
+> (Also, do **not** use `JSON.parse(JSON.stringify(...))`)
+
+---
+
+### Problem Statement
+
+Write a function `deepClone(obj)` that deeply copies any object or array, including nested structures, without using:
+
+- `structuredClone()`
+- `JSON.parse(JSON.stringify(...))`  
+  These are commonly disallowed because:
+  - They **fail for special values**: `undefined`, `function`, `symbol`
+  - They **remove circular references**
+  - They **convert Date to strings**
+
+---
+
+### Step-by-Step Thinking Process
+
+When cloning, ask yourself:
+
+- Is the value a **primitive**? → Return it as is.
+- Is it an **array**? → Create a new array, recursively clone each item.
+- Is it a **plain object**? → Create a new object, clone each key recursively.
+
+We’ll handle these cases step-by-step.
+
+---
+
+### Step 1: Base Case — Return primitive as-is
+
+```js
+function deepClone(value) {
+  // If value is not an object or is null, return it directly (e.g., string, number, null)
+  if (typeof value !== "object" || value === null) {
+    return value;
+  }
+
+  // We'll handle arrays and objects below...
+}
 ```
 
 ---
 
-### Tips and Patterns to Remember
+### Step 2: Handle arrays
 
-- `bind` is used for **partial application** and **context preservation**
-- `bind` **does not execute immediately** — it returns a new callable function
+```js
+if (Array.isArray(value)) {
+  // Create a new array and recursively clone each element
+  return value.map((item) => deepClone(item));
+}
+```
+
+---
+
+### Step 3: Handle plain objects
+
+```js
+const result = {};
+
+for (const key in value) {
+  // hasOwnProperty check avoids copying properties inherited from the prototype chain
+  if (Object.prototype.hasOwnProperty.call(value, key)) {
+    result[key] = deepClone(value[key]);
+  }
+}
+
+return result;
+```
+
+> **Why use `hasOwnProperty`?**
+>
+> - Prevents copying properties from the prototype chain.
+> - Safer than using `value.hasOwnProperty(key)` directly, because some objects might not inherit from `Object.prototype` (e.g., created via `Object.create(null)`).
+
+> **Alternative:** Use `Object.keys(value).forEach(...)`, which iterates only over own, enumerable properties.
+
+---
+
+### Final Version — Clean Deep Clone Function
+
+```js
+function deepClone(value) {
+  if (typeof value !== "object" || value === null) {
+    return value; // base case: primitive or null
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => deepClone(item));
+  }
+
+  const result = {};
+  for (const key in value) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      result[key] = deepClone(value[key]);
+    }
+  }
+
+  return result;
+}
+```
+
+---
+
+### Test Cases
+
+```js
+const original = {
+  name: "John",
+  age: 30,
+  address: {
+    city: "CityName",
+    coordinates: {
+      lat: 12.34,
+      lng: 56.78,
+    },
+  },
+  hobbies: ["reading", "sports"],
+};
+
+const copy = deepClone(original);
+
+// Mutate copy
+copy.name = "Alice";
+copy.address.city = "OtherCity";
+copy.hobbies.push("coding");
+
+console.log(original.name); // John
+console.log(original.address.city); // CityName
+console.log(original.hobbies.length); // 2 — unaffected by mutation in copy
+```
+
+---
+
+### Caveats
+
+This version does **not handle**:
+
+- `Date`, `RegExp`, `Map`, `Set`
+- `Function`, `Symbol`
+- Circular references
+
+You can mention these as limitations in interviews and suggest libraries like `lodash.cloneDeep` for production use.
+
+---
+
+### Patterns to Remember
+
+- Always check for `null` explicitly.
+- For objects, prefer `Object.prototype.hasOwnProperty.call(...)` or `Object.keys(...)`.
+- Recursively call your function for each property.
+- Be aware of special types not handled (e.g., Dates, Maps).
 
 ---
