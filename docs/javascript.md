@@ -464,7 +464,7 @@ fetchData((data) => console.log(data)); // "Data received"
 
 * Built on top of Promises.  
 * Looks synchronous, avoids chaining.
-```js
+```javascript
 async function fetchData() {
  const data = await new Promise((resolve) =>
    setTimeout(() => resolve("Data received"), 1000)
