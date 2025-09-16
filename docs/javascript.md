@@ -4,21 +4,24 @@
 
 Problem: Why do we use let and const instead of var? Show with code.  
 Answer:  
+```js
 // var is function-scoped, allows redeclaration  
-var x \= 10;  
-var x \= 20;  
+var x =  10;  
+var x =  20;  
 console.log(x); // 20
 
 // let is block-scoped, no redeclaration  
-let y \= 10;  
-// let y \= 20; // Error  
-y \= 20;  
+let y =  10;  
+// let y =  20; // Error  
+y =  20;  
 console.log(y); // 20
 
 // const is block-scoped, cannot be reassigned  
-const z \= 10;  
-// z \= 20; // Error  
+const z =  10;  
+// z =  20; // Error  
 console.log(z); // 10
+
+```
 
 **Key Point:**
 
@@ -26,16 +29,12 @@ console.log(z); // 10
 * `let`: block scoped, hoisted but in **Temporal Dead Zone** until initialized.  
 * `const`: block scoped, must be initialized, cannot be reassigned.
 
-Video:   
-Variables \- [https://www.scaler.com/topics/course/javascript-beginners/video/243/](https://www.scaler.com/topics/course/javascript-beginners/video/243/)  
-Hoisting- [https://www.scaler.com/topics/course/javascript-beginners/video/255/](https://www.scaler.com/topics/course/javascript-beginners/video/255/)
-
 ## Q2. What is hoisting in JavaScript?
 
 **Problem:** Explain hoisting with a function and variable example.
 
 **Solution:**
-
+```js
 // Function declarations are hoisted completely  
 sayHello();  
 function sayHello() {  
@@ -44,15 +43,16 @@ function sayHello() {
 
 // Variables with var are hoisted but initialized with undefined  
 console.log(a); // undefined  
-var a \= 5;
+var a =  5;
 
 // Variables with let/const are hoisted but not initialized  
 // console.log(b); // ReferenceError  
-let b \= 10;
+let b =  10;
+```
 
 **Key Point:**
 
-* Hoisting \= moving declarations to the top of scope during compilation.  
+* Hoisting =  moving declarations to the top of scope during compilation.  
 * Function declarations hoist fully.  
 * `var` hoists with `undefined`.  
 * `let` and `const` hoist but are not accessible until initialization (TDZ).
@@ -62,58 +62,47 @@ let b \= 10;
 **Problem:** Explain the difference between primitive and reference types with an example.
 
 **Solution:**
-
+```js
 // Primitive types: stored by value
-
-let a \= 10;
-
-let b \= a;
-
-b \= 20;
+let a =  10;
+let b =  a;
+b =  20;
 
 console.log(a); // 10 (unchanged)
-
 console.log(b); // 20
 
 // Reference types: stored by reference
-
-let obj1 \= { name: "John" };
-
-let obj2 \= obj1;
-
-obj2.name \= "Doe";
+let obj1 =  { name: "John" };
+let obj2 =  obj1;
+obj2.name =  "Doe";
 
 console.log(obj1.name); // "Doe" (changed because same reference)
+```
 
 **Key Point:**
 
 * **Primitives**: `string`, `number`, `boolean`, `null`, `undefined`, `symbol`, `bigint` → copied by value.  
 * **References**: `object`, `array`, `function` → copied by reference (both variables point to same memory).
 
-Videos:
-
-Primitives \- [https://www.scaler.com/topics/course/javascript-beginners/video/298/](https://www.scaler.com/topics/course/javascript-beginners/video/298/)
-
-Reference \- [https://www.scaler.com/topics/course/javascript-beginners/video/299/](https://www.scaler.com/topics/course/javascript-beginners/video/299/)
-
 ## Q4. Explain `==` vs `===` in JavaScript.
 
 **Problem:** Why should we prefer `===` over `==`? Show with examples.
 
 **Solution:**
+```js
+console.log(2 == "2");   // true  (type coercion happens)
 
-console.log(2 \== "2");   // true  (type coercion happens)
+console.log(2 === "2");  // false (strict equality)
 
-console.log(2 \=== "2");  // false (strict equality)
+console.log(null == undefined);  // true
 
-console.log(null \== undefined);  // true
-
-console.log(null \=== undefined); // false
+console.log(null === undefined); // false
+```
 
 **Key Point:**
 
 * `==` → checks **value only**, allows type coercion.  
-* `===` → checks **value \+ type** (strict equality).  
+* `===` → checks **value + type** (strict equality).  
 * Best practice: always use `===` unless there’s a strong reason for loose equality.
 
 ## Q5. What is scope in JavaScript?
@@ -121,10 +110,10 @@ console.log(null \=== undefined); // false
 **Problem:** Explain global, function, and block scope with examples.
 
 **Solution:**
-
+```js
 // Global Scope
 
-var a \= 10;
+var a = 10;
 
 function test() {
 
@@ -133,28 +122,20 @@ function test() {
 }
 
 // Function Scope
-
 function fn() {
-
- var b \= 20;
-
+ var b = 20;
  console.log(b);
-
 }
-
 // console.log(b); // Error
 
 // Block Scope
-
 if (true) {
-
- let c \= 30;
-
- const d \= 40;
-
+ let c = 30;
+ const d = 40;
 }
 
 // console.log(c, d); // Error (not accessible outside block)
+```
 
 **Key Point:**
 
@@ -165,18 +146,19 @@ if (true) {
 ## Q6. What are closures in JavaScript?
 
 **Problem:** Explain closure with a real example.
-
+```js
 function outer() {  
- let count \= 0;  
+ let count = 0;  
  return function inner() {  
    count++;  
    return count;  
  };  
 }
 
-const counter \= outer();  
+const counter = outer();  
 console.log(counter()); // 1  
 console.log(counter()); // 2
+```
 
 **Key Point :**
 
@@ -186,11 +168,6 @@ console.log(counter()); // 2
   * **Function factories**  
   * **Callbacks & event handlers**
 
-**Videos:**
-
-**Closures \- [https://www.scaler.com/topics/course/javascript-beginners/video/302/](https://www.scaler.com/topics/course/javascript-beginners/video/302/)**
-
-**Closures with nested functions: [https://www.scaler.com/topics/course/javascript-beginners/video/303/](https://www.scaler.com/topics/course/javascript-beginners/video/303/)**
 
 ## Q7. Implement a counter using closures
 
@@ -205,27 +182,20 @@ The requirement is to implement this without using any global variables — the 
 * Return an inner function that increments and returns the count each time it is called.  
 * Each counter created from the function should have its own independent state.
 
+```js
 function createCounter() {
-
- let count \= 0; // private variable
-
+ let count = 0; // private variable
  return function() {
-
    count++;
-
    return count;
-
  };
-
 }
 
-const counter1 \= createCounter();
-
+const counter1 = createCounter();
 console.log(counter1()); // 1
-
 console.log(counter1()); // 2
-
 console.log(counter1()); // 3
+```
 
 **Output / Explanation:**
 
@@ -249,21 +219,17 @@ The requirement is to implement currying: transform a function with multiple arg
 * The innermost function finally computes the result  
 * Useful for partial application, reusability, and functional programming.
 
+```js
 function add(a) {
-
  return function(b) {
-
    return function(c) {
-
-     return a \+ b \+ c;
-
+     return a + b + c;
    };
-
  };
-
 }
 
 console.log(add(2)(3)(4)); // 9
+```
 
 **Output / Explanation:**
 
@@ -285,42 +251,29 @@ The requirement is to design a `once` utility that ensures a given function can 
 * If called again → return the stored result instead of executing the function again.
 
 **Code:**
-
+```js
 function once(fn) {
-
- let called \= false;
-
+ let called = false;
  let result;
-
  return function(...args) {
-
-   if (\!called) {
-
-     result \= fn.apply(this, args); // run only first time
-
-     called \= true;
-
+   if (!called) {
+     result = fn.apply(this, args); // run only first time
+     called = true;
    }
-
    return result;
-
  };
-
 }
 
 // Example usage
-
-const initializePayment \= once((amount) \=\> {
-
+const initializePayment = once((amount) => {
  console.log("Payment gateway initialized");
-
- return \`Processed payment of $${amount}\`;
-
+ return `Processed payment of $${amount}`;
 });
 
-console.log(initializePayment(100)); // "Payment gateway initialized" \+ "Processed payment of $100"
+console.log(initializePayment(100)); // "Payment gateway initialized" + "Processed payment of $100"
 
 console.log(initializePayment(200)); // Returns "Processed payment of $100" (ignores new call)
+```
 
 **Output / Explanation:**
 
@@ -344,50 +297,32 @@ How can you design a **memoization utility** so that the function “remembers�
 * If not → compute, store in cache, and return result.
 
 Code:
-
+```js
 function memoize(fn) {
-
- const cache \= {};
-
+ const cache = {};
  return function(...args) {
-
-   const key \= JSON.stringify(args); // serialize arguments
-
-   if (cache\[key\]) {
-
+   const key = JSON.stringify(args); // serialize arguments
+   if (cache[key]) {
      console.log("Fetching from cache");
-
-     return cache\[key\];
-
+     return cache[key];
    }
-
    console.log("Computing result");
-
-   const result \= fn.apply(this, args);
-
-   cache\[key\] \= result;
-
+   const result = fn.apply(this, args);
+   cache[key] = result;
    return result;
-
  };
-
 }
 
 // Example: factorial
-
 function factorial(n) {
-
- if (n \<= 1) return 1;
-
- return n \* factorial(n \- 1);
-
+ if (n <= 1) return 1;
+ return n * factorial(n - 1);
 }
 
-const memoFactorial \= memoize(factorial);
-
-console.log(memoFactorial(5)); // Computing result \-\> 120
-
-console.log(memoFactorial(5)); // Fetching from cache \-\> 120
+const memoFactorial = memoize(factorial);
+console.log(memoFactorial(5)); // Computing result -> 120
+console.log(memoFactorial(5)); // Fetching from cache -> 120
+```
 
 **Output / Explanation:**
 
@@ -409,12 +344,12 @@ console.log(memoFactorial(5)); // Fetching from cache \-\> 120
   * **Microtask Queue** → e.g., `Promise.then`, `queueMicrotask`.  
 * **Order of execution:** Call stack → microtasks → macrotasks.
 
+```js
 console.log("Start");
-
-setTimeout(() \=\> console.log("Timeout"), 0);  
-Promise.resolve().then(() \=\> console.log("Promise"));
-
+setTimeout(() => console.log("Timeout"), 0);  
+Promise.resolve().then(() => console.log("Promise"));
 console.log("End");
+```
 
 Output:  
 Start  
@@ -426,17 +361,14 @@ Timeout
 
 * Promises (microtasks) run before timers (macrotasks).
 
-Videos:  
-Event loop \- [https://www.scaler.com/topics/course/javascript-beginners/video/289/](https://www.scaler.com/topics/course/javascript-beginners/video/289/)
-
-setTimeout and setInterval \-  [https://www.scaler.com/topics/course/javascript-beginners/video/291/](https://www.scaler.com/topics/course/javascript-beginners/video/291/)
-
 ## Q12. Implement a `sleep` function using Promises.
 
 **Problem Statement:**  
  Suppose you are asked to implement a `sleep` function that delays execution for a given number of milliseconds before resuming. Example:
 
-sleep(2000).then(() \=\> console.log("Executed after 2 seconds"));
+```js
+sleep(2000).then(() => console.log("Executed after 2 seconds"));
+```
 
 **Approach:**
 
@@ -445,18 +377,20 @@ sleep(2000).then(() \=\> console.log("Executed after 2 seconds"));
 * The caller can use `.then` or `await` to wait for it.
 
 Code:  
+```js
 function sleep(ms) {  
- return new Promise((resolve) \=\> setTimeout(resolve, ms));  
+ return new Promise((resolve) => setTimeout(resolve, ms));  
 }
 
 // Example usage  
-sleep(2000).then(() \=\> console.log("Executed after 2 seconds"));
+sleep(2000).then(() => console.log("Executed after 2 seconds"));
 
 (async function test() {  
  console.log("Before sleep");  
  await sleep(1000);  
  console.log("After 1 second");  
 })();
+```
 
 ### **Explanation:**
 
@@ -481,7 +415,7 @@ So `sleep(2000)` → returns a Promise that resolves after 2000 ms.
 
 * Here, we call `sleep(2000)`.  
 * That returns a Promise.  
-* We attach `.then(() => ...)` → which means \- run this function once the Promise resolves.  
+* We attach `.then(() => ...)` → which means - run this function once the Promise resolves.  
 * After 2 seconds → `"Executed after 2 seconds"` is logged.
 
 Output:  
@@ -505,61 +439,49 @@ After 1 second
 * Pass a function into another function to be executed later.  
 * Can cause **callback hell** if deeply nested.
 
+```js
 function fetchData(callback) {
-
- setTimeout(() \=\> {
-
+ setTimeout(() => {
    callback("Data received");
-
  }, 1000);
-
 }
 
-fetchData((data) \=\> console.log(data)); // "Data received"
+fetchData((data) => console.log(data)); // "Data received"
+```
 
 2. **Promise**
 
 * Represents a value that may be available now, later, or never.  
 * Cleaner chaining with `.then()`, `.catch()`.
-
-  const fetchPromise \= new Promise((resolve) \=\>  
-   setTimeout(() \=\> resolve("Data received"), 1000)  
+```js
+  const fetchPromise = new Promise((resolve) =>  
+   setTimeout(() => resolve("Data received"), 1000)  
   );  
-  fetchPromise.then((data) \=\> console.log(data));  
-    
+  fetchPromise.then((data) => console.log(data));  
+```    
     
 3. **Async/Await**
 
 * Built on top of Promises.  
 * Looks synchronous, avoids chaining.
-
+```js
 async function fetchData() {
-
- const data \= await new Promise((resolve) \=\>
-
-   setTimeout(() \=\> resolve("Data received"), 1000)
-
+ const data = await new Promise((resolve) =>
+   setTimeout(() => resolve("Data received"), 1000)
  );
 
  console.log(data);
-
 }
 
 fetchData();
+```
 
 **Key Point:**
 
 * **Callbacks** → low-level, messy in nested flows.  
 * **Promises** → more structured, chaining possible.  
 * **Async/Await** → syntactic sugar over promises, most readable.
-
-Videos:
-
-Promises- [https://www.scaler.com/topics/course/javascript-beginners/video/292/](https://www.scaler.com/topics/course/javascript-beginners/video/292/)
-
-Async / Await \- [https://www.scaler.com/topics/course/javascript-beginners/video/293/](https://www.scaler.com/topics/course/javascript-beginners/video/293/)
-
-## 
+ 
 
 ## Q14. Implement a polyfill for `Promise.all`
 
@@ -573,7 +495,7 @@ Async / Await \- [https://www.scaler.com/topics/course/javascript-beginners/vide
 
 Example:
 
-* Promise.all(\[p1, p2, p3\]) // → resolves \[10, 20, 30\]
+* Promise.all([p1, p2, p3]) // → resolves [10, 20, 30]
 
 ### **Intuition (what do we need?):**
 
@@ -602,25 +524,26 @@ Example:
       * If `completed === total`, call `resolve(results)`.  
     * On reject: immediately call `reject(err)`
 
+```js
 function promiseAll(promises) {  
- return new Promise((resolve, reject) \=\> {  
-   let results \= \[\];  
-   let completed \= 0;
+ return new Promise((resolve, reject) => {  
+   let results = [];  
+   let completed = 0;
 
    // Edge case: empty input  
-   if (promises.length \=== 0) {  
-     return resolve(\[\]);  
+   if (promises.length === 0) {  
+     return resolve([]);  
    }
 
-   promises.forEach((p, index) \=\> {  
+   promises.forEach((p, index) => {  
      // Ensure we’re working with a Promise  
      Promise.resolve(p)  
-       .then((value) \=\> {  
-         results\[index\] \= value; // store in correct position  
+       .then((value) => {  
+         results[index] = value; // store in correct position  
          completed++;
 
          // If all promises have resolved  
-         if (completed \=== promises.length) {  
+         if (completed === promises.length) {  
            resolve(results);  
          }  
        })  
@@ -630,21 +553,21 @@ function promiseAll(promises) {
 }
 
 // Example usage  
-const p1 \= Promise.resolve(10);  
-const p2 \= new Promise((res) \=\> setTimeout(() \=\> res(20), 500));  
-const p3 \= Promise.resolve(30);
+const p1 = Promise.resolve(10);  
+const p2 = new Promise((res) => setTimeout(() => res(20), 500));  
+const p3 = Promise.resolve(30);
 
-promiseAll(\[p1, p2, p3\]).then(console.log);  
-// \[10, 20, 30\] after \~500ms
+promiseAll([p1, p2, p3]).then(console.log);  
+// [10, 20, 30] after ~500ms
+```
 
 **Expected Behavior:**
 
 * Resolves with array of values when all succeed.  
 * Rejects immediately if any promise fails.
 
-## 
 
-  ## Q15. Implement a polyfill for `Promise.race`
+## Q15. Implement a polyfill for `Promise.race`
 
 **Problem Statement:**  
  Suppose you are asked to implement your own version of `Promise.race`. The requirements are:
@@ -654,11 +577,12 @@ promiseAll(\[p1, p2, p3\]).then(console.log);
 3. Unlike `Promise.all`, we don’t wait for everyone — only the first result matters.
 
 For example:
+```js
+const p1 = new Promise((res) => setTimeout(() => res("First"), 100));  
+const p2 = new Promise((res) => setTimeout(() => res("Second"), 200));
 
-const p1 \= new Promise((res) \=\> setTimeout(() \=\> res("First"), 100));  
-const p2 \= new Promise((res) \=\> setTimeout(() \=\> res("Second"), 200));
-
-Promise.race(\[p1, p2\]).then(console.log); // "First"
+Promise.race([p1, p2]).then(console.log); // "First"
+```
 
 ### **Intuition (what do we need?):**
 
@@ -678,13 +602,14 @@ So the closure here just needs to **watch all promises** and settle at the first
   * Attach `.then(resolve).catch(reject)`.  
 * The first one to trigger wins.
 
-`Code:`  
+Code:
+```js
 function promiseRace(promises) {  
- return new Promise((resolve, reject) \=\> {  
+ return new Promise((resolve, reject) => {  
    // Edge case: empty input  
-   if (promises.length \=== 0) return;
+   if (promises.length === 0) return;
 
-   promises.forEach((p) \=\> {  
+   promises.forEach((p) => {  
      Promise.resolve(p) // normalize to Promise  
        .then(resolve)   // first resolve wins  
        .catch(reject);  // first reject wins  
@@ -693,19 +618,21 @@ function promiseRace(promises) {
 }
 
 // Example usage  
-const p1 \= new Promise((res) \=\> setTimeout(() \=\> res("First"), 100));  
-const p2 \= new Promise((res) \=\> setTimeout(() \=\> res("Second"), 200));  
-const p3 \= new Promise((\_, rej) \=\> setTimeout(() \=\> rej("Error\!"), 150));
+const p1 = new Promise((res) => setTimeout(() => res("First"), 100));  
+const p2 = new Promise((res) => setTimeout(() => res("Second"), 200));  
+const p3 = new Promise((_, rej) => setTimeout(() => rej("Error!"), 150));
 
-promiseRace(\[p1, p2, p3\])  
- .then((val) \=\> console.log("Resolved with:", val))  
- .catch((err) \=\> console.log("Rejected with:", err));
+promiseRace([p1, p2, p3])  
+ .then((val) => console.log("Resolved with:", val))  
+ .catch((err) => console.log("Rejected with:", err));
+
+```
 
 ### **`Step-by-Step Explanation:`**
 
 1. **Wrapper Promise**
 
-return new Promise((resolve, reject) \=\> { ... });
+return new Promise((resolve, reject) => { ... });
 
 * We create and return a new Promise.  
 * This is the promise that will behave like Promise.race.  
@@ -729,7 +656,7 @@ Why? Because `Promise.race` must also work if the array contains non-Promise val
 *  → should immediately resolve with `42`.  
 * Wrapping each `p` with `Promise.resolve` ensures we always deal with a valid Promise.
 
-**4\. Attaching `.then` and `.catch`**
+**4. Attaching `.then` and `.catch`**
 
 `.then(resolve)`  
 `.catch(reject);`
@@ -760,26 +687,27 @@ This is often asked to test whether you understand **Promise chaining vs `Promis
 * Each Promise starts **only after the previous one resolves**.
 
 Code:  
+```js
 // Simulated async functions  
 function task(name, delay) {  
- return new Promise((resolve) \=\> {  
-   setTimeout(() \=\> {  
-     console.log(\`Finished ${name}\`);  
+ return new Promise((resolve) => {  
+   setTimeout(() => {  
+     console.log(`Finished ${name}`);  
      resolve(name);  
    }, delay);  
  });  
 }
 
-const tasks \= \[  
- () \=\> task("Task 1", 1000),  
- () \=\> task("Task 2", 500),  
- () \=\> task("Task 3", 800)  
-\];
+const tasks = [  
+ () => task("Task 1", 1000),  
+ () => task("Task 2", 500),  
+ () => task("Task 3", 800)  
+];
 
 // Parallel execution  
 async function runParallel() {  
  console.log("Running in parallel:");  
- await Promise.all(tasks.map((t) \=\> t()));  
+ await Promise.all(tasks.map((t) => t()));  
  console.log("All done (parallel)");  
 }
 
@@ -792,7 +720,8 @@ async function runSequential() {
  console.log("All done (sequential)");  
 }
 
-runParallel().then(() \=\> runSequential());
+runParallel().then(() => runSequential());
+```
 
 **Key Point for Interviews:**
 
@@ -809,8 +738,9 @@ runParallel().then(() \=\> runSequential());
 * Each retry should happen after the previous one fails
 
 Example:
-
+```js
 `retry(fetchData, 3).then(console.log).catch(console.error);`
+```
 
 This should attempt `fetchData` up to 3 times before giving up.
 
@@ -821,63 +751,41 @@ This should attempt `fetchData` up to 3 times before giving up.
 * If attempts remain → retry.  
 * If no attempts remain → reject.
 
+```js
 function retry(fn, attempts) {
-
- return new Promise((resolve, reject) \=\> {
-
+ return new Promise((resolve, reject) => {
    function attempt() {
-
      fn()
-
        .then(resolve)
-
-       .catch((err) \=\> {
-
-         if (attempts-- \> 0) {
-
+       .catch((err) => {
+         if (attempts-- > 0) {
            console.log("Retrying...");
-
            attempt(); // retry again
-
          } else {
-
            reject(err);
-
          }
-
        });
-
    }
-
    attempt();
-
  });
-
 }
 
 // Example usage
 
-let count \= 0;
-
+let count = 0;
 function unreliableTask() {
-
- return new Promise((resolve, reject) \=\> {
-
+ return new Promise((resolve, reject) => {
    count++;
-
-   if (count \< 3) reject("Failed attempt " \+ count);
-
-   else resolve("Success on attempt " \+ count);
+   if (count < 3) reject("Failed attempt " + count);
+   else resolve("Success on attempt " + count);
 
  });
-
 }
 
 retry(unreliableTask, 5)
-
- .then((res) \=\> console.log(res))
-
- .catch((err) \=\> console.error(err));
+ .then((res) => console.log(res))
+ .catch((err) => console.error(err));
+```
 
 **Expected Behavior:**
 
@@ -895,28 +803,23 @@ retry(unreliableTask, 5)
 * JavaScript uses **prototypal inheritance**.  
 * Every object has an internal link to another object called its **prototype**.  
 * If a property/method is not found on the object, JS looks up the prototype chain.
+```js
+const parent = { greet: () => console.log("Hello from parent") };
 
-const parent \= { greet: () \=\> console.log("Hello from parent") };
+const child = Object.create(parent);
 
-const child \= Object.create(parent);
-
-child.sayHi \= () \=\> console.log("Hi from child");
+child.sayHi = () => console.log("Hi from child");
 
 child.sayHi();   // "Hi from child"
 
 child.greet();   // "Hello from parent" (inherited)
+```
 
 **Key Point:**
 
 * Objects can inherit directly from other objects.  
 * `Object.create(proto)` sets up the prototype chain.  
 * Modern `class` syntax is syntactic sugar over this mechanism.
-
-Videos:
-
-Prototypes \- [https://www.scaler.com/topics/course/javascript-beginners/video/284/](https://www.scaler.com/topics/course/javascript-beginners/video/284/)
-
-Inheritance \- [https://www.scaler.com/topics/course/javascript-beginners/video/280/](https://www.scaler.com/topics/course/javascript-beginners/video/280/)
 
 ## Q19. Difference between `__proto__`, `prototype`, and `constructor`
 
@@ -927,27 +830,30 @@ Inheritance \- [https://www.scaler.com/topics/course/javascript-beginners/video/
 
 1. **`__proto__`**  
 * The actual prototype of an object (points to its parent).
+```js
+const obj = {};
 
-const obj \= {};
-
-console.log(obj.\_\_proto\_\_ \=== Object.prototype); // true
+console.log(obj.__proto__ === Object.prototype); // true
+```
 
 2. **`prototype`**  
 * A property of functions (especially constructor functions).  
 * Defines what properties new objects created with `new` will inherit.
 
-function Person(name) { this.name \= name; }
+```js
+function Person(name) { this.name = name; }
 
-Person.prototype.sayHi \= function() { console.log("Hi " \+ this.name); };
+Person.prototype.sayHi = function() { console.log("Hi " + this.name); };
 
-const p \= new Person("Alice");
-
+const p = new Person("Alice");
 p.sayHi(); // "Hi Alice"
+```
 
 3. **`constructor`**  
 * Points back to the function that created the instance.
-
-console.log(p.constructor \=== Person); // true
+```js
+console.log(p.constructor === Person); // true
+```
 
 **Key Point:**
 
@@ -968,21 +874,19 @@ console.log(p.constructor \=== Person); // true
 3. Executes the constructor function with `this` bound to the new object.  
 4. Returns the new object (unless the constructor explicitly returns another object).
 
+```js
 function Person(name) {
-
- this.name \= name;
-
+ this.name = name;
 }
 
-Person.prototype.sayHi \= function() {
-
- console.log("Hi, " \+ this.name);
-
+Person.prototype.sayHi = function() {
+ console.log("Hi, " + this.name);
 };
 
-const p \= new Person("Alice");
-
+const p = new Person("Alice");
 p.sayHi(); // "Hi, Alice"
+
+```
 
 **Key Point:**
 
@@ -998,15 +902,13 @@ p.sayHi(); // "Hi, Alice"
 2. Get its **keys, values, and entries** using built-in static methods.
 
 For example:
+```js
+const parent = { role: "admin" };
+const child = Object.create(parent);
+child.name = "Alice";
+child.age = 25;
 
-`const parent = { role: "admin" };`
-
-`const child = Object.create(parent);`
-
-`child.name = "Alice";`
-
-`child.age = 25;`
-
+```
 How would you extract only `name` and `age` (child’s own properties) and ignore `role`?
 
 **Approach:**
@@ -1015,40 +917,28 @@ How would you extract only `name` and `age` (child’s own properties) and ignor
 * Use `Object.keys`, `Object.values`, `Object.entries` for structured access.
 
 **Code:**
-
-const parent \= { role: "admin" };
-
-const child \= Object.create(parent);
-
-child.name \= "Alice";
-
-child.age \= 25;
+```js
+const parent = { role: "admin" };
+const child = Object.create(parent);
+child.name = "Alice";
+child.age = 25;
 
 // Filtering own properties
 
 for (let key in child) {
-
  if (child.hasOwnProperty(key)) {
-
-   console.log("Own property:", key, "=", child\[key\]);
-
+   console.log("Own property:", key, "=", child[key]);
  }
-
 }
 
 // Using Object static methods
-
-console.log(Object.keys(child));   // \["name", "age"\]
-
-console.log(Object.values(child)); // \["Alice", 25\]
-
-console.log(Object.entries(child));
-
-// \[\["name", "Alice"\], \["age", 25\]\]
-
+console.log(Object.keys(child));   // ["name", "age"]
+console.log(Object.values(child)); // ["Alice", 25]
+console.log(Object.entries(child)); // [["name", "Alice"], ["age", 25]]
+```
 **Key Point:**
 
-* `for...in` iterates over all enumerable properties (own \+ inherited). Use `hasOwnProperty` to filter.  
+* `for...in` iterates over all enumerable properties (own + inherited). Use `hasOwnProperty` to filter.  
 * `Object.keys` / `Object.values` / `Object.entries` return only **own enumerable properties** (ignore inherited ones automatically).
 
 ## Q23. Difference between `call`, `apply`, and `bind`
@@ -1065,43 +955,37 @@ You are given an object and a standalone function, and you need to ensure the fu
 * `bind`: returns a new function with bound context, does not invoke immediately.
 
 **Code:**
-
-const person \= { name: "Alice" };
+```js
+const person = { name: "Alice" };
 
 function greet(greeting, punctuation) {
-
- console.log(greeting \+ " " \+ this.name \+ punctuation);
-
+ console.log(greeting + " " + this.name + punctuation);
 }
 
 // call → arguments individually
+greet.call(person, "Hello", "!");
 
-greet.call(person, "Hello", "\!");
-
-// "Hello Alice\!"
+// "Hello Alice!"
 
 // apply → arguments as array
 
-greet.apply(person, \["Hi", "\!\!"\]);
+greet.apply(person, ["Hi", "!!"]);
 
-// "Hi Alice\!\!"
+// "Hi Alice!!"
 
 // bind → returns a new function
 
-const boundGreet \= greet.bind(person, "Hey");
+const boundGreet = greet.bind(person, "Hey");
 
 boundGreet("?");
 
 // "Hey Alice?"
+```
 
 **Key Point:**
 
 * Use `call` / `apply` when you want **immediate execution** with a specific `this`.  
 * Use `bind` when you want to create a new function with `this` permanently set.
-
-Video: 
-
-Call,apply, bind \- [https://www.scaler.com/topics/course/javascript-beginners/video/285/](https://www.scaler.com/topics/course/javascript-beginners/video/285/)
 
 ## Q24. Implement your own `bind` polyfill
 
@@ -1116,20 +1000,18 @@ The polyfill should:
 * 
 
 Example usage:
-
+```js
 function greet(greeting, punctuation) {
-
- console.log(greeting \+ " " \+ this.name \+ punctuation);
-
+ console.log(greeting + " " + this.name + punctuation);
 }
 
-const person \= { name: "Alice" };
+const person = { name: "Alice" };
+const boundGreet = greet.myBind(person, "Hello");
 
-const boundGreet \= greet.myBind(person, "Hello");
+boundGreet("!");
 
-boundGreet("\!");
-
-// Expected: "Hello Alice\!"
+// Expected: "Hello Alice!"
+```
 
 ### **Intuition (what do we need?):**
 
@@ -1139,41 +1021,32 @@ boundGreet("\!");
 2. We must remember two sets of arguments:  
    * `args`: the ones passed during binding (`"Hello"`).  
    * `newArgs`: the ones passed when calling the bound function (`"!"`).  
-   * Final arguments \= `args.concat(newArgs)`.  
+   * Final arguments = `args.concat(newArgs)`.  
 3. Closures come into play:  
    * We need to remember the original function (`fn`) and the pre-applied arguments (`args`).  
 4. Execution should be done with `apply`:  
    * `fn.apply(context, [...args, ...newArgs])`.
 
 Code:
-
-Function.prototype.myBind \= function(context, ...args) {
-
- const fn \= this; // the original function
-
+```js
+Function.prototype.myBind = function(context, ...args) {
+ const fn = this; // the original function
  return function(...newArgs) {
-
-   // When called, merge binding args \+ call-time args
-
-   return fn.apply(context, \[...args, ...newArgs\]);
-
+   // When called, merge binding args + call-time args
+   return fn.apply(context, [...args, ...newArgs]);
  };
-
 };
 
 // Example usage
-
 function greet(greeting, punctuation) {
-
- console.log(greeting \+ " " \+ this.name \+ punctuation);
-
+ console.log(greeting + " " + this.name + punctuation);
 }
 
-const person \= { name: "Alice" };
+const person = { name: "Alice" };
+const boundGreet = greet.myBind(person, "Hello");
 
-const boundGreet \= greet.myBind(person, "Hello");
-
-boundGreet("\!"); // "Hello Alice\!"
+boundGreet("!"); // "Hello Alice!"
+```
 
 **Key Point:**
 
@@ -1193,94 +1066,72 @@ boundGreet("\!"); // "Hello Alice\!"
 * **Arrow functions**: `this` is **lexically bound** → taken from the surrounding scope where the function was defined.
 
 **Example:**
-
-const obj \= {
-
+```js
+const obj = {
  name: "Alice",
-
  normalFn: function() {
-
    console.log("Normal:", this.name);
-
  },
-
- arrowFn: () \=\> {
-
+ arrowFn: () => {
    console.log("Arrow:", this.name);
-
  }
-
 };
 
 obj.normalFn(); // "Normal: Alice"
-
 obj.arrowFn();  // "Arrow: undefined" (or global/outer scope)
+```
 
 2. **Arguments object**  
 * **Normal functions** have their own `arguments` object.  
 * **Arrow functions** do **not** have `arguments` — they use the outer scope’s.
 
+```js
 function normalFn(a, b) {
-
- console.log(arguments); // \[Arguments\] { '0': 1, '1': 2 }
-
+ console.log(arguments); // [Arguments] { '0': 1, '1': 2 }
 }
 
 normalFn(1, 2);
-
-const arrowFn \= (a, b) \=\> {
-
+const arrowFn = (a, b) => {
  console.log(arguments); // ReferenceError (no arguments object)
-
 };
 
 arrowFn(1, 2);
+```
 
 3. **Constructor behavior**  
 * **Normal functions** can be used as constructors with `new`.  
 * **Arrow functions** cannot (they throw an error).
 
-function Person(name) { this.name \= name; }
-
-const p \= new Person("Alice"); // Works
-
-const ArrowPerson \= (name) \=\> { this.name \= name; };
-
-// const ap \= new ArrowPerson("Bob"); // Error: ArrowPerson is not a constructor
+```js
+function Person(name) { this.name = name; }
+const p = new Person("Alice"); // Works
+const ArrowPerson = (name) => { this.name = name; };
+// const ap = new ArrowPerson("Bob"); // Error: ArrowPerson is not a constructor
+```
 
 **Key Point:**
 
 * Use **arrow functions** for callbacks and preserving lexical `this`.  
 * Use **normal functions** when you need `this`, `arguments`, or constructor behavior.
 
-Video:
-
-This keyword \- [https://www.scaler.com/topics/course/javascript-beginners/video/274/](https://www.scaler.com/topics/course/javascript-beginners/video/274/)
-
 ## Q26. Fix the `this` issue in `setTimeout` 
 
 **Problem Statement:**  
  Suppose you have an object with a method that logs its name after a delay. Using `setTimeout` with a normal function often causes the `this` context to be lost, because `setTimeout` executes the callback in the global scope.
 
-const person \= {
-
+```js
+const person = {
  name: "Alice",
-
  greet: function() {
-
    setTimeout(function() {
-
-     console.log("Hello, " \+ this.name);
-
+     console.log("Hello, " + this.name);
    }, 1000);
-
  }
-
 };
 
 person.greet();
-
 // Output after 1s: "Hello, undefined"  (this is lost)
+```
 
 How would you fix this so that the correct `this.name` is used?
 
@@ -1293,45 +1144,38 @@ How would you fix this so that the correct `this.name` is used?
   2. Or capture `this` in a variable (`const self = this`).  
   3. Or use `.bind(this)`.
 
-const person \= {
-
+```js
+const person = {
  name: "Alice",
-
  greet: function() {
-
-   setTimeout(() \=\> {
-
-     console.log("Hello, " \+ this.name);
-
+   setTimeout(() => {
+     console.log("Hello, " + this.name);
    }, 1000);
-
  }
-
 };
 
 person.greet();
-
 // Output: "Hello, Alice"
+```
 
 **Alternative Fixes:**
 
 1. **Using `.bind(this)`**
 
+```js
 setTimeout(function() {
-
- console.log("Hello, " \+ this.name);
-
+ console.log("Hello, " + this.name);
 }.bind(this), 1000);
 
+```
+
 2. **Using `self = this`**
-
-const self \= this;
-
+```js
+const self = this;
 setTimeout(function() {
-
- console.log("Hello, " \+ self.name);
-
+ console.log("Hello, " + self.name);
 }, 1000);
+```
 
 **Key Point:**
 
@@ -1349,13 +1193,15 @@ setTimeout(function() {
 * Copies only the first level.  
 * Nested objects/arrays still refer to the same memory (shared).
 
-const obj \= { name: "Alice", address: { city: "Paris" } };
+```js
+const obj = { name: "Alice", address: { city: "Paris" } };
 
-const shallow \= { ...obj };
+const shallow = { ...obj };
 
-shallow.address.city \= "London";
+shallow.address.city = "London";
 
 console.log(obj.address.city); // "London" (changed in both)
+```
 
 **Ways to do shallow copy:**
 
@@ -1365,15 +1211,18 @@ console.log(obj.address.city); // "London" (changed in both)
 * Copies all levels, creating **independent clones**.  
 * Changing nested objects does not affect the original.
 
-const obj \= { name: "Alice", address: { city: "Paris" } };
+```js
+const obj = { name: "Alice", address: { city: "Paris" } };
 
 // Deep copy using JSON
 
-const deep \= JSON.parse(JSON.stringify(obj));
+const deep = JSON.parse(JSON.stringify(obj));
 
-deep.address.city \= "London";
+deep.address.city = "London";
 
 console.log(obj.address.city); // "Paris" (unchanged)
+
+```
 
 **Other ways to deep copy:**
 
@@ -1385,9 +1234,6 @@ console.log(obj.address.city); // "Paris" (unchanged)
 * **Shallow copy** → fast, but nested references still linked.  
 * **Deep copy** → safe for nested structures, but slower and may lose special object types (like `Date`, `Map`) if using `JSON.parse/stringify`.
 
-Videos:  
-Shallow copy \- [https://www.scaler.com/topics/course/javascript-beginners/video/300/](https://www.scaler.com/topics/course/javascript-beginners/video/300/)  
-Deep Copy \- [https://www.scaler.com/topics/course/javascript-beginners/video/301/](https://www.scaler.com/topics/course/javascript-beginners/video/301/)
 
 ## Q28. Implement a deep clone function without using JSON
 
@@ -1400,16 +1246,18 @@ Constraints:
 2. It should **not** rely on `JSON.parse(JSON.stringify())` (because that fails for `Date`, `Map`, `Set`, functions, etc.).  
 3. Modified clone should not affect the original.
 
-const person \= {  
+```js
+const person = {  
  name: "Ravi",  
- details: { city: "Delhi", hobbies: \["cricket", "music"\] }  
+ details: { city: "Delhi", hobbies: ["cricket", "music"] }  
 };
 
-const clone \= deepClone(person);  
-clone.details.city \= "Mumbai";
+const clone = deepClone(person);  
+clone.details.city = "Mumbai";
 
 console.log(person.details.city); // "Delhi" (original unchanged)  
 console.log(clone.details.city);  // "Mumbai"
+```
 
 ### **Intuition (what do we need?):**
 
@@ -1429,9 +1277,10 @@ Whenever you hear “remember structure and dive inside deeply” → **recursio
 * Use `hasOwnProperty` to skip inherited properties.  
 * Recursively call `deepClone` on nested values.
 
+```js
 function deepClone(value) {  
  // Step 1: handle primitives and null  
- if (value \=== null || typeof value \!== "object") {  
+ if (value === null || typeof value !== "object") {  
    return value;  
  }
 
@@ -1442,36 +1291,38 @@ function deepClone(value) {
 
  // Step 3: handle Array  
  if (Array.isArray(value)) {  
-   return value.map(item \=\> deepClone(item));  
+   return value.map(item => deepClone(item));  
  }
 
  // Step 4: handle Object  
- const clonedObj \= {};  
+ const clonedObj = {};  
  for (let key in value) {  
    if (value.hasOwnProperty(key)) {  
-     clonedObj\[key\] \= deepClone(value\[key\]);  
+     clonedObj[key] = deepClone(value[key]);  
    }  
  }  
  return clonedObj;  
 }
 
 // Example usage  
-const person \= {  
+const person = {  
  name: "Ravi",  
- details: { city: "Delhi", hobbies: \["cricket", "music"\] },  
+ details: { city: "Delhi", hobbies: ["cricket", "music"] },  
  dob: new Date("1995-06-15")  
 };
 
-const clone \= deepClone(person);
+const clone = deepClone(person);
 
 // Modify clone  
-clone.details.city \= "Mumbai";  
-clone.details.hobbies\[0\] \= "football";
+clone.details.city = "Mumbai";  
+clone.details.hobbies[0] = "football";
 
 console.log(person.details.city);    // "Delhi"  
-console.log(person.details.hobbies); // \["cricket", "music"\]  
+console.log(person.details.hobbies); // ["cricket", "music"]  
 console.log(clone.details.city);     // "Mumbai"  
 console.log(clone.dob instanceof Date); // true
+
+```
 
 **Expected Behavior:**
 
@@ -1492,10 +1343,11 @@ console.log(clone.dob instanceof Date); // true
 The `reduce` method executes a reducer function on each element of the array, resulting in a single accumulated output.
 
 Example:
-
-\[1, 2, 3, 4\].reduce((acc, curr) \=\> acc \+ curr, 0);
+```js
+[1, 2, 3, 4].reduce((acc, curr) => acc + curr, 0);
 
 // Output: 10
+```
 
 We need to implement `myReduce` that behaves the same way.
 
@@ -1507,57 +1359,39 @@ We need to implement `myReduce` that behaves the same way.
 * Iterate over the array, calling the callback on each element.
 
 Code:
-
-Array.prototype.myReduce \= function(callback, initialValue) {
-
- if (typeof callback \!== "function") {
-
-   throw new TypeError(callback \+ " is not a function");
-
+```js
+Array.prototype.myReduce = function(callback, initialValue) {
+ if (typeof callback !== "function") {
+   throw new TypeError(callback + " is not a function");
  }
 
- let accumulator \= initialValue;
-
- let startIndex \= 0;
+ let accumulator = initialValue;
+ let startIndex = 0;
 
  // If no initialValue, take first element as accumulator
-
- if (accumulator \=== undefined) {
-
-   if (this.length \=== 0) {
-
+ if (accumulator === undefined) {
+   if (this.length === 0) {
      throw new TypeError("Reduce of empty array with no initial value");
-
    }
-
-   accumulator \= this\[0\];
-
-   startIndex \= 1;
-
+   accumulator = this[0];
+   startIndex = 1;
  }
-
- for (let i \= startIndex; i \< this.length; i++) {
-
-   accumulator \= callback(accumulator, this\[i\], i, this);
-
+ for (let i = startIndex; i < this.length; i++) {
+   accumulator = callback(accumulator, this[i], i, this);
  }
-
  return accumulator;
-
 };
 
 // Example usage
 
-const sum \= \[1, 2, 3, 4\].myReduce((acc, curr) \=\> acc \+ curr, 0);
+const sum = [1, 2, 3, 4].myReduce((acc, curr) => acc + curr, 0);
 
 console.log(sum); // 10
 
-const product \= \[1, 2, 3, 4\].myReduce((acc, curr) \=\> acc \* curr);
+const product = [1, 2, 3, 4].myReduce((acc, curr) => acc * curr);
 
 console.log(product); // 24
-
-Video:  
-Reduce method \- [https://www.scaler.com/topics/course/javascript-beginners/video/271/](https://www.scaler.com/topics/course/javascript-beginners/video/271/)
+```
 
 ## Q30. Implement `debounce(fn, delay)`
 
@@ -1565,7 +1399,7 @@ Reduce method \- [https://www.scaler.com/topics/course/javascript-beginners/vide
  You’re building a search box that fires an API call on every keypress. This is wasteful. Implement a `debounce` utility so that `fn` runs only **after the user stops typing for `delay` ms**.
 
 **Scenario:**  
- You’re typing in a search box. Each keystroke fires an event. If you hit 10 keys in 2 seconds, that’s 10 API calls — wasteful\!  
+ You’re typing in a search box. Each keystroke fires an event. If you hit 10 keys in 2 seconds, that’s 10 API calls — wasteful!  
  Instead, we want: **Only fire after the user pauses for X ms.**
 
 **Intuition (what do we need?):**
@@ -1584,21 +1418,23 @@ Reduce method \- [https://www.scaler.com/topics/course/javascript-beginners/vide
   * **Start a new one with `setTimeout`.**  
   * **After delay, finally execute the original function with latest arguments.**
 
+```js
 function debounce(fn, delay) {  
  let timerId; // remembered across calls (closure)
 
  return function(...args) { // inner function (user calls this)  
-   const context \= this;
+   const context = this;
 
    // Step 1: cancel any previously scheduled execution  
    clearTimeout(timerId);
 
    // Step 2: start a new timer  
-   timerId \= setTimeout(() \=\> {  
+   timerId = setTimeout(() => {  
      fn.apply(context, args); // run fn with latest args  
    }, delay);  
  };  
 }
+```
 
 **Expected Behavior:**
 
@@ -1632,48 +1468,31 @@ Instead, we want: **Fire at most once every X ms.**
 * If enough time has passed since the last call, run `fn`; otherwise ignore (or queue).
 
 **Code (timestamp-based throttle):**
-
+```js
 function throttle(fn, interval) {
 
- let timerId \= null;   // to block execution while timer runs
-
- let lastArgs \= null;  // to remember latest arguments
+ let timerId = null;   // to block execution while timer runs
+ let lastArgs = null;  // to remember latest arguments
 
  return function(...args) {
-
-   const context \= this;
-
-   lastArgs \= args;
-
-   if (\!timerId) {
-
+   const context = this;
+   lastArgs = args;
+   if (!timerId) {
      // Step 1: run immediately (leading call)
-
      fn.apply(context, lastArgs);
-
      // Step 2: start timer
-
-     timerId \= setTimeout(() \=\> {
-
-       timerId \= null;
-
+     timerId = setTimeout(() => {
+       timerId = null;
        // Step 3: if new args arrived, run trailing call
-
        if (lastArgs) {
-
          fn.apply(context, lastArgs);
-
-         lastArgs \= null;
-
+         lastArgs = null;
        }
-
      }, interval);
-
    }
-
  };
-
 }
+```
 
 **Expected Behavior:**
 
@@ -1682,43 +1501,27 @@ function throttle(fn, interval) {
 
 **Alternative (timer-based throttle with trailing call):**
 
+```js
 function throttleTrailing(fn, interval) {
-
- let timerId \= null;
-
- let lastArgs \= null;
-
+ let timerId = null;
+ let lastArgs = null;
  return function(...args) {
-
-   lastArgs \= args;
-
-   const context \= this;
-
-   if (timerId \=== null) {
-
+   lastArgs = args;
+   const context = this;
+   if (timerId === null) {
      fn.apply(context, lastArgs); // leading call
-
-     timerId \= setTimeout(() \=\> {
-
-       timerId \= null;
-
+     timerId = setTimeout(() => {
+       timerId = null;
        // Optional: run trailing call if new args arrived during the wait
-
-       if (lastArgs \!== null) {
-
+       if (lastArgs !== null) {
          fn.apply(context, lastArgs);
-
-         lastArgs \= null;
-
+         lastArgs = null;
        }
-
      }, interval);
-
    }
-
  };
-
 }
+```
 
 **Key Differences (Debounce vs Throttle):**
 
@@ -1729,12 +1532,11 @@ function throttleTrailing(fn, interval) {
 
 **Problem Statement:**  
  You’re given a deeply nested array, e.g.:
-
-`const arr = [1, [2, [3, [4]], 5]];`
-
+```js
+const arr = [1, [2, [3, [4]], 5]];`
+```
 You are asked to implement a function `flatten` that transforms it into:
-
-`[1, 2, 3, 4, 5]`
+[1, 2, 3, 4, 5]
 
 Constraints:
 
@@ -1747,7 +1549,7 @@ Constraints:
    * If element is a primitive → push directly into result.  
    * If element is an array → recursively break it down until primitives.  
 2. Whenever you see “process structure inside structure until no more” → **recursion** is a natural fit.  
-3. Alternatively, you can solve with iteration \+ stack, but recursion is the clearest first solution.
+3. Alternatively, you can solve with iteration + stack, but recursion is the clearest first solution.
 
 ### **Step-by-Step Plan:**
 
@@ -1758,13 +1560,13 @@ Constraints:
 * Return result.
 
 ### **Code (recursive solution):**
-
+```js
 function flatten(arr) {  
- let result \= \[\];
+ let result = [];
 
  for (let item of arr) {  
    if (Array.isArray(item)) {  
-     result \= result.concat(flatten(item)); // recurse  
+     result = result.concat(flatten(item)); // recurse  
    } else {  
      result.push(item);  
    }  
@@ -1774,29 +1576,32 @@ function flatten(arr) {
 }
 
 // Example usage  
-const arr \= \[1, \[2, \[3, \[4\]\], 5\]\];  
+const arr = [1, [2, [3, [4]], 5]];  
 console.log(flatten(arr));  
-// \[1, 2, 3, 4, 5\]
+// [1, 2, 3, 4, 5]
+```
 
 ### **Alternative (using `reduce`):**
-
+```js
 function flatten(arr) {  
- return arr.reduce((acc, item) \=\> {  
+ return arr.reduce((acc, item) => {  
    if (Array.isArray(item)) {  
      return acc.concat(flatten(item));  
    } else {  
      return acc.concat(item);  
    }  
- }, \[\]);  
+ }, []);  
 }
+```
 
 ## Q33. Implement currying for infinite sum
 
 **Problem Statement:**  
  You are asked to implement a function `sum` that can be called in a chain like this:
-
-`console.log(sum(1)(2)(3)(4)());   // 10`  
-`console.log(sum(5)(10)(15)());    // 30`
+```js
+console.log(sum(1)(2)(3)(4)());   // 10  
+console.log(sum(5)(10)(15)());    // 30
+```
 
 This requires:
 
@@ -1804,27 +1609,17 @@ This requires:
 * Returning the accumulated sum when the chain ends.
 
 ### **Code :**
-
+```js
 function sum(x) {
-
- let total \= x;
-
+ let total = x;
  function inner(y) {
-
-   if (y \!== undefined) {
-
-     total \+= y;
-
+   if (y !== undefined) {
+     total += y;
      return inner; // allow chaining
-
    }
-
    return total; // stop condition
-
  }
-
  return inner;
-
 }
 
 // Example usage
@@ -1832,8 +1627,7 @@ function sum(x) {
 console.log(sum(1)(2)(3)(4)()); // 10
 
 console.log(sum(5)(10)(15)());  // 30
-
-### 
+``` 
 
 ## Q34. Implement a custom Event Emitter
 
@@ -1845,12 +1639,12 @@ It should:
 1. Allow registering event listeners with `.on(event, callback)`.  
 2. Allow removing listeners with `.off(event, callback)`.  
 3. Allow triggering all listeners with `.emit(event, ...args)`.
-
-const emitter \= new EventEmitter();
+```js
+const emitter = new EventEmitter();
 
 function greet(name) {
 
- console.log("Hello, " \+ name);
+ console.log("Hello, " + name);
 
 }
 
@@ -1862,15 +1656,17 @@ emitter.off("greet", greet);
 
 emitter.emit("greet", "Ravi"); // (nothing happens)
 
+```
+
 ### **Intuition (what do we need?):**
 
 1. We need a way to **store events and their listeners** → use an object like:
 
 {
 
-  greet: \[callback1, callback2\],
+  greet: [callback1, callback2],
 
-  login: \[callback3\]
+  login: [callback3]
 
 }
 
@@ -1890,93 +1686,59 @@ Whenever you think “we need to remember sets of things and update them later�
 * `.off`: filter out the callback from the event’s array.
 
 Code:
-
+```js
 class EventEmitter {
 
  constructor() {
-
-   this.events \= {}; // event → \[listeners\]
-
+   this.events = {}; // event → [listeners]
  }
 
  on(event, listener) {
-
-   if (\!this.events\[event\]) {
-
-     this.events\[event\] \= \[\];
-
+   if (!this.events[event]) {
+     this.events[event] = [];
    }
-
-   this.events\[event\].push(listener);
-
+   this.events[event].push(listener);
  }
 
  off(event, listener) {
-
-   if (\!this.events\[event\]) return;
-
-   this.events\[event\] \= this.events\[event\].filter(
-
-     (l) \=\> l \!== listener
-
+   if (!this.events[event]) return;
+   this.events[event] = this.events[event].filter(
+     (l) => l !== listener
    );
-
  }
 
  emit(event, ...args) {
-
-   if (\!this.events\[event\]) return;
-
-   this.events\[event\].forEach((listener) \=\> {
-
+   if (!this.events[event]) return;
+   this.events[event].forEach((listener) => {
      listener.apply(this, args);
-
    });
-
  }
-
 }
 
 // Example usage
-
-const emitter \= new EventEmitter();
-
+const emitter = new EventEmitter();
 function greet(name) {
-
- console.log("Hello, " \+ name);
-
+ console.log("Hello, " + name);
 }
 
 emitter.on("greet", greet);
-
 emitter.emit("greet", "Ravi"); // "Hello, Ravi"
-
 emitter.off("greet", greet);
-
 emitter.emit("greet", "Ravi"); // nothing
+```
 
 Expected behavior:
+```js
+emitter.on("event1", () => console.log("First listener"));
 
-emitter.on("event1", () \=\> console.log("First listener"));
-
-emitter.on("event1", () \=\> console.log("Second listener"));
+emitter.on("event1", () => console.log("Second listener"));
 
 emitter.emit("event1"); 
 
 // "First listener"
 
 // "Second listener"
-
-## Q36. Difference between `async`, `defer`, and normal `<script>` loading
-
-* **Normal script** → blocks HTML parsing until the script loads & executes.  
-* **`async`** → script loads asynchronously, executes immediately when ready (order not guaranteed).  
-* **`defer`** → script loads asynchronously, but executes after HTML parsing (order preserved).
-
-**Expected Interview Trick:** *“Which one would you use for analytics scripts vs app code?”*
-
-* Use `async` for independent scripts (ads, analytics).  
-* Use `defer` for app scripts that need DOM ready.
+```
 
 ## Q36. Difference between `async`, `defer`, and normal `<script>` loading
 
@@ -1995,7 +1757,7 @@ So the core is about **when does the script block HTML parsing and when does it 
 
 ### **Step-by-Step Behavior**
 
-#### **1\. Normal `<script>`**
+#### **1. Normal `<script>`**
 
 `<script src="main.js"></script>`
 
@@ -2003,7 +1765,7 @@ So the core is about **when does the script block HTML parsing and when does it 
 * Loads the script → executes it immediately.  
 * Then continues parsing.
 
-#### **2\. Async `<script>`**
+#### **2. Async `<script>`**
 
 `<script src="analytics.js" async></script>`
 
@@ -2014,7 +1776,7 @@ So the core is about **when does the script block HTML parsing and when does it 
  Good for independent scripts (analytics, ads).  
  Dangerous if script depends on DOM or other scripts.
 
-#### **3\. Defer `<script>`**
+#### **3. Defer `<script>`**
 
 `<script src="app.js" defer></script>`
 
@@ -2025,16 +1787,17 @@ So the core is about **when does the script block HTML parsing and when does it 
 Best for app scripts that depend on DOM being ready.
 
 Suppose your HTML has:
+```html
+<head>
 
-\<head\>
+ <script src="a.js"></script>
 
- \<script src\="a.js"\>\</script\>
+ <script src="b.js" async></script>
 
- \<script src\="b.js" async\>\</script\>
+ <script src="c.js" defer></script>
 
- \<script src\="c.js" defer\>\</script\>
-
-\</head\>
+</head>
+```
 
 * `a.js` → blocks immediately, runs before parsing continues.  
 * `b.js` → loads async, may run anytime when ready (maybe before or after parsing ends).  
@@ -2067,34 +1830,34 @@ This is a **system-level question** that tests whether you understand how JS, CS
 1. **HTML → DOM (Document Object Model)**  
    * Browser parses HTML → creates a tree of elements.  
    * Example:
+```html
+<body>
 
-\<body\>
+ <h1>Hello</h1>
 
- \<h1\>Hello\</h1\>
-
-\</body\>
-
+</body>
+```
 * → DOM Tree: `Document → body → h1 → text`.
 
-**2\. CSS → CSSOM (CSS Object Model)**
+**2. CSS → CSSOM (CSS Object Model)**
 
 * Browser parses CSS → builds a tree of style rules.
 
-3\. **DOM \+ CSSOM → Render Tree**
+3. **DOM + CSSOM → Render Tree**
 
 * Browser combines structure (DOM) and style (CSSOM).  
 * Invisible elements (`display: none`) are skipped.
 
-4\. **Layout (Reflow)**
+4. **Layout (Reflow)**
 
 * Browser calculates position and size of each element (box model).  
   * Example: `h1` → (x=0, y=0, width=500px, height=50px).
 
-5\. **Paint**
+5. **Paint**
 
 * Browser fills pixels (colors, borders, text, images).
 
-6\.  **Composite**
+6.  **Composite**
 
 * Layers (e.g., for CSS transforms, z-index) are drawn together into the final screen image.
 
@@ -2104,7 +1867,7 @@ HTML → DOM
 
 CSS → CSSOM
 
-DOM \+ CSSOM → Render Tree
+DOM + CSSOM → Render Tree
 
 Render Tree → Layout → Paint → Composite
 
@@ -2131,7 +1894,7 @@ Render Tree → Layout → Paint → Composite
 
 ### **Key Points:**
 
-* CRP \= sequence browser takes to render pixels.  
+* CRP = sequence browser takes to render pixels.  
 * Steps: **DOM → CSSOM → Render Tree → Layout → Paint → Composite**.  
 * JavaScript & CSS can **block rendering**.  
 * Optimizations: async/defer, critical CSS, minimize reflows, lazy load assets.
@@ -2152,10 +1915,10 @@ This is a **modern frontend question** that checks your knowledge of performance
 
 ### **Step-by-Step**
 
-#### **1\. LCP (Largest Contentful Paint) – Loading Performance**
+#### **1. LCP (Largest Contentful Paint) – Loading Performance**
 
 * Definition: Time taken to render the **largest visible element** (text block, image, video)  
-* Good: \< **2.5s** | Needs Improvement: 2.5–4s | Poor: \> 4s.  
+* Good: < **2.5s** | Needs Improvement: 2.5–4s | Poor: > 4s.  
 * Example:  
   * If your hero image takes 5s → bad LCP.  
   * If your text loads instantly but big banner image is slow → bad LCP.
@@ -2167,24 +1930,24 @@ This is a **modern frontend question** that checks your knowledge of performance
 * Preload critical fonts/images.  
 * Remove render-blocking JS/CSS.
 
-#### **2\. FID (First Input Delay) – Interactivity**
+#### **2. FID (First Input Delay) – Interactivity**
 
 * Definition: Delay between user’s first interaction (click, keypress) and browser responding.  
-* Good: \< **100ms** | Needs Improvement: 100–300ms | Poor: \> 300ms.  
+* Good: < **100ms** | Needs Improvement: 100–300ms | Poor: > 300ms.  
 * Example:  
   * If user clicks a button but JS is still executing a heavy loop for 2s → high FID.
 
 **Optimizations:**
 
-* Break up long JavaScript tasks (\>50ms) using `requestIdleCallback` or `setTimeout`.  
+* Break up long JavaScript tasks (>50ms) using `requestIdleCallback` or `setTimeout`.  
 * Use **code-splitting** (load only necessary JS upfront).  
 * Defer non-critical scripts.  
 * Optimize event listeners.
 
-#### **3\. CLS (Cumulative Layout Shift) – Visual Stability**
+#### **3. CLS (Cumulative Layout Shift) – Visual Stability**
 
 * Definition: Measures unexpected visual shifts (elements moving without user interaction).  
-* Score: \< **0.1** is Good, 0.1–0.25 Needs Improvement, \>0.25 Poor.  
+* Score: < **0.1** is Good, 0.1–0.25 Needs Improvement, >0.25 Poor.  
 * Example:  
   * Page loads, text is visible, but suddenly an ad pushes it down → bad CLS.
 
@@ -2197,17 +1960,17 @@ This is a **modern frontend question** that checks your knowledge of performance
 ### **Story / Analogy**
 
 * Imagine you’re in a restaurant:  
-  * **LCP** \= how fast the waiter brings your main dish.  
-  * **FID** \= how fast the waiter responds when you call him.  
-  * **CLS** \= whether your table suddenly shifts while eating.
+  * **LCP** = how fast the waiter brings your main dish.  
+  * **FID** = how fast the waiter responds when you call him.  
+  * **CLS** = whether your table suddenly shifts while eating.
 
 All three matter for a good dining (or browsing) experience.
 
 ### **Key Points (Interview Takeaways):**
 
-* **LCP** → Measures **loading performance**. Target \< 2.5s.  
-* **FID** → Measures **interactivity**. Target \< 100ms.  
-* **CLS** → Measures **visual stability**. Target \< 0.1.  
+* **LCP** → Measures **loading performance**. Target < 2.5s.  
+* **FID** → Measures **interactivity**. Target < 100ms.  
+* **CLS** → Measures **visual stability**. Target < 0.1.  
 * Tools to measure: Lighthouse, Chrome DevTools, PageSpeed Insights.  
 * Optimizations involve **faster resource loading, smaller JS, stable layouts**.
 
@@ -2228,16 +1991,17 @@ This is a **deep internals question** that tests if you understand how JS handle
 
 ### **Step-by-Step**
 
-#### **1\. Memory Lifecycle in JS**
+#### **1. Memory Lifecycle in JS**
 
 * Allocate → Use → Release.  
 * Example:
-
-let user \= { name: "Ravi" }; // allocate
+```js
+let user = { name: "Ravi" }; // allocate
 
 console.log(user.name);      // use
 
-user \= null;                 // release (eligible for GC)
+user = null;                 // release (eligible for GC)
+```
 
 #### **Reachability Concept**
 
@@ -2245,21 +2009,21 @@ user \= null;                 // release (eligible for GC)
 * **Roots**: global object (`window` in browsers, `global` in Node), current execution stack, and variables in closures.  
 * If an object can’t be reached → marked for deletion.
 
-#### **3\. Mark-and-Sweep Algorithm (simplified)**
+#### **3. Mark-and-Sweep Algorithm (simplified)**
 
 * Step 1: Start at roots, “mark” all reachable objects.  
 * Step 2: Sweep through heap, remove unmarked (unreachable) ones.  
 * This runs automatically, periodically.
 
-#### **4\. Why memory leaks still happen**
+#### **4. Why memory leaks still happen**
 
 Even with GC, leaks happen when references are kept alive unintentionally:
 
 * **Closures holding references**
-
+```js
 function leaky() {
 
- let bigArray \= new Array(1000000).fill("data");
+ let bigArray = new Array(1000000).fill("data");
 
  return function() {
 
@@ -2269,17 +2033,19 @@ function leaky() {
 
 }
 
-const leak \= leaky();
+const leak = leaky();
 
-// bigArray stays in memory forever\!
+// bigArray stays in memory forever!
+```
 
 **Detached DOM nodes**
-
-let el \= document.getElementById("myDiv");
+```js
+let el = document.getElementById("myDiv");
 
 document.body.removeChild(el);
 
 // if still referenced in JS → not garbage collected
+```
 
 * **Event listeners not removed** → DOM nodes stay alive.
 
@@ -2299,27 +2065,28 @@ This checks both your **JS fundamentals** and **frontend optimization knowledge*
    * **Capturing (trickling down)** → root → parent → child.  
    * **Bubbling (bubbling up)** → child → parent → root.
 
-Default in browsers \= **bubbling phase**.
+Default in browsers = **bubbling phase**.
 
 ### **Step-by-Step Propagation**
 
 Suppose we have:
+```html
+<div id="parent">
 
-\<div id\="parent"\>
+ <button id="child">Click Me</button>
 
- \<button id\="child"\>Click Me\</button\>
+</div>
+```
 
-\</div\>
-
-#### **1\. Capturing phase**
+#### **1. Capturing phase**
 
 * Event goes from `document` → `<html>` → `<body>` → `<div>` → `<button>`.
 
-#### **2\. Target phase**
+#### **2. Target phase**
 
 * Event reaches the actual target (`<button>`).
 
-#### **3\. Bubbling phase**
+#### **3. Bubbling phase**
 
 * Event goes back up: `<button>` → `<div>` → `<body>` → `<html>` → `document`.
 
@@ -2329,16 +2096,17 @@ Suppose we have:
 * Use `event.target` to figure out which child was clicked.
 
 **Example:**
+```js
+document.getElementById("parent").addEventListener("click", (e) => {
 
-document.getElementById("parent").addEventListener("click", (e) \=\> {
-
- if (e.target.tagName \=== "BUTTON") {
+ if (e.target.tagName === "BUTTON") {
 
    console.log("Button clicked:", e.target.id);
 
  }
 
 });
+```
 
 * Now even if you dynamically add 100 buttons inside `parent`, you don’t need new listeners.  
 - Saves memory.  
@@ -2356,23 +2124,23 @@ This checks whether you understand JS execution internals, async behavior, and w
 ### **Intuition (what do we need to know?):**
 
 1. JavaScript is **single-threaded** → one thing at a time.  
-2. To handle async tasks, it uses a **call stack \+ memory heap \+ event loop \+ task queues**.  
+2. To handle async tasks, it uses a **call stack + memory heap + event loop + task queues**.  
 3. Execution is like a play:  
-   * **Heap** \= backstage storage (objects, data).  
-   * **Call Stack** \= stage (functions run here, one at a time).  
-   * **Event Loop** \= director, deciding when the next actor (task) comes on stage.  
-   * **Task Queues** \= actors waiting backstage (macrotasks & microtasks).
+   * **Heap** = backstage storage (objects, data).  
+   * **Call Stack** = stage (functions run here, one at a time).  
+   * **Event Loop** = director, deciding when the next actor (task) comes on stage.  
+   * **Task Queues** = actors waiting backstage (macrotasks & microtasks).
 
 ### **Step-by-Step**
 
-#### **1\. Heap**
+#### **1. Heap**
 
 * Memory storage for objects, arrays, functions.  
 * Example:
 
-let user \= { name: "Rohit" }; // stored in heap
+let user = { name: "Rohit" }; // stored in heap
 
-2\. **Call Stack**
+2. **Call Stack**
 
 * Executes functions in LIFO (Last In First Out).  
 * Example:  
@@ -2388,33 +2156,33 @@ b()
 
 console.log()
 
-#### **3\. Web APIs (Browser APIs)**
+#### **3. Web APIs (Browser APIs)**
 
 * For async tasks like `setTimeout`, DOM events, fetch.  
 * These don’t run in the call stack; they’re handled by browser runtime.
 
-#### **4\. Task Queues**
+#### **4. Task Queues**
 
 * Once async work is ready, callbacks go into queues.  
 * Two types:  
   * **Macrotask Queue** → `setTimeout`, `setInterval`, DOM events, I/O.  
   * **Microtask Queue** → `Promise.then`, `queueMicrotask`, `MutationObserver`.
 
-#### **5\. Event Loop**
+#### **5. Event Loop**
 
 * Constantly checks:  
   * Is the **call stack empty**?  
   * If yes → take next task from **microtask queue first**, then macrotask queue.  
 * Microtasks always run before macrotasks.  
+```js
   console.log("Start");  
     
-  setTimeout(() \=\> console.log("Timeout"), 0);  
+  setTimeout(() => console.log("Timeout"), 0);  
     
-  Promise.resolve().then(() \=\> console.log("Promise"));  
+  Promise.resolve().then(() => console.log("Promise"));  
     
   console.log("End");  
-  
-
+  ```
 
 **Execution order:**
 
