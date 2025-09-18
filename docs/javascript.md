@@ -431,90 +431,102 @@ After 1 second
 ## Q13. Difference between callbacks, promises, and async/await
 
 **Problem Statement:**  
- In interviews, you might be asked: *Explain how callbacks, promises, and async/await differ in handling asynchronous code.*
+In interviews, you might be asked: *Explain how callbacks, promises, and async/await differ in handling asynchronous code.*
 
 **Solution:**
 
-1. **Callback**  
-* Pass a function into another function to be executed later.  
-* Can cause **callback hell** if deeply nested.
+### 1. Callback
+- Pass a function into another function to be executed later.  
+- Can cause **callback hell** if deeply nested.
 
 ```js
 function fetchData(callback) {
- setTimeout(() => {
-   callback("Data received");
- }, 1000);
+  setTimeout(() => {
+    callback("Data received");
+  }, 1000);
 }
 
 fetchData((data) => console.log(data)); // "Data received"
 ```
 
-2. **Promise**
+---
 
-* Represents a value that may be available now, later, or never.  
-* Cleaner chaining with `.then()`, `.catch()`.
+### 2. Promise
+- Represents a value that may be available now, later, or never.  
+- Cleaner chaining with `.then()`, `.catch()`.
+
 ```js
-  const fetchPromise = new Promise((resolve) =>  
-   setTimeout(() => resolve("Data received"), 1000)  
-  );  
-  fetchPromise.then((data) => console.log(data));  
-```    
-    
-3. **Async/Await**
+const fetchPromise = new Promise((resolve) =>
+  setTimeout(() => resolve("Data received"), 1000)
+);
 
-* Built on top of Promises.  
-* Looks synchronous, avoids chaining
+fetchPromise.then((data) => console.log(data));
+```
+
+---
+
+### 3. Async/Await
+- Built on top of Promises.  
+- Looks synchronous, avoids chaining.
+
 ```js
 async function fetchData() {
- const data = await new Promise((resolve) =>
-   setTimeout(() => resolve("Data received"), 1000)
- );
+  const data = await new Promise((resolve) =>
+    setTimeout(() => resolve("Data received"), 1000)
+  );
 
- console.log(data);
+  console.log(data);
 }
 
 fetchData();
 ```
 
-**Key Point:**
+---
 
-* **Callbacks** → low-level, messy in nested flows.  
-* **Promises** → more structured, chaining possible.  
-* **Async/Await** → syntactic sugar over promises, most readable.
- 
+**Key Points:**
+- **Callbacks** → low-level, messy in nested flows.  
+- **Promises** → more structured, chaining possible.  
+- **Async/Await** → syntactic sugar over promises, most readable.  
+
 
 ## Q14. Implement a polyfill for `Promise.all`
 
 **Problem Statement:**  
- Suppose you are asked to implement your own version of `Promise.all`. The requirements are:
+Suppose you are asked to implement your own version of `Promise.all`. The requirements are:
 
 1. Input: an array of Promises (or values).  
 2. Output: a new Promise that:  
    * **resolves** when all Promises resolve → with results in the same order.  
    * **rejects immediately** if any Promise rejects.
 
-Example:
+**Example:**
 
-* Promise.all([p1, p2, p3]) // → resolves [10, 20, 30]
+```js
+Promise.all([p1, p2, p3]); // → resolves [10, 20, 30]
+```
 
-### **Intuition (what do we need?):**
+---
+
+### Intuition (what do we need?)
 
 1. We need to **wait for multiple async tasks** to finish.  
-   * This means: track how many are done.  
+   * Track how many are done.  
 2. We need to **preserve order**.  
-   * So even if `p2` finishes before `p1`, its result should be stored in the right slot.  
+   * Even if `p2` finishes before `p1`, its result should be stored in the right slot.  
 3. We need to **resolve once all are done**.  
-   * That means: compare a `completed` counter to total promises.  
+   * Compare a `completed` counter to total promises.  
 4. We need to **reject fast** if any fails.  
-   * As soon as one rejects, no point waiting → reject the outer promise immediately.  
+   * As soon as one rejects, no point waiting → reject immediately.  
 5. We need to handle **non-Promise values** too.  
-   * `Promise.all([1, Promise.resolve(2)])` → should work.  
-   * So wrap each input with `Promise.resolve(p)`.
+   * Example: `Promise.all([1, Promise.resolve(2)])` should work.  
+   * Wrap each input with `Promise.resolve(p)`.
 
-### **Step-by-Step Plan:**
+---
 
-* Create an outer Promise → `new Promise((resolve, reject) => { ... })`.  
-* Inside:  
+### Step-by-Step Plan
+
+- Create an outer Promise → `new Promise((resolve, reject) => { ... })`.  
+- Inside:  
   * Initialize `results = []` and `completed = 0`.  
   * Loop through input array:  
     * Wrap each element with `Promise.resolve(p)` to normalize.  
@@ -522,49 +534,53 @@ Example:
       * Store result in `results[index]`.  
       * Increment `completed`.  
       * If `completed === total`, call `resolve(results)`.  
-    * On reject: immediately call `reject(err)`
+    * On reject: immediately call `reject(err)`.
+
+---
+
+### Implementation
 
 ```js
-function promiseAll(promises) {  
- return new Promise((resolve, reject) => {  
-   let results = [];  
-   let completed = 0;
+function promiseAll(promises) {
+  return new Promise((resolve, reject) => {
+    let results = [];
+    let completed = 0;
 
-   // Edge case: empty input  
-   if (promises.length === 0) {  
-     return resolve([]);  
-   }
+    // Edge case: empty input
+    if (promises.length === 0) {
+      return resolve([]);
+    }
 
-   promises.forEach((p, index) => {  
-     // Ensure we’re working with a Promise  
-     Promise.resolve(p)  
-       .then((value) => {  
-         results[index] = value; // store in correct position  
-         completed++;
+    promises.forEach((p, index) => {
+      // Normalize to a Promise
+      Promise.resolve(p)
+        .then((value) => {
+          results[index] = value; // store in correct order
+          completed++;
 
-         // If all promises have resolved  
-         if (completed === promises.length) {  
-           resolve(results);  
-         }  
-       })  
-       .catch(reject); // reject immediately on first error  
-   });  
- });  
+          if (completed === promises.length) {
+            resolve(results);
+          }
+        })
+        .catch(reject); // reject immediately on first failure
+    });
+  });
 }
 
-// Example usage  
-const p1 = Promise.resolve(10);  
-const p2 = new Promise((res) => setTimeout(() => res(20), 500));  
+// Example usage
+const p1 = Promise.resolve(10);
+const p2 = new Promise((res) => setTimeout(() => res(20), 500));
 const p3 = Promise.resolve(30);
 
-promiseAll([p1, p2, p3]).then(console.log);  
+promiseAll([p1, p2, p3]).then(console.log);
 // [10, 20, 30] after ~500ms
 ```
 
-**Expected Behavior:**
+---
 
-* Resolves with array of values when all succeed.  
-* Rejects immediately if any promise fails.
+**Expected Behavior:**
+- Resolves with an array of values when all succeed.  
+- Rejects immediately if any promise fails.  
 
 
 ## Q15. Implement a polyfill for `Promise.race`
@@ -1814,90 +1830,105 @@ Suppose your HTML has:
 ## Q37. Explain the Critical Rendering Path (CRP)
 
 **Problem Statement:**  
- In interviews, you may be asked:  
- *“What happens inside the browser from the moment HTML arrives until the page is painted? Can you explain the Critical Rendering Path and optimizations?”*
+In interviews, you may be asked:  
+*“What happens inside the browser from the moment HTML arrives until the page is painted? Can you explain the Critical Rendering Path and optimizations?”*
 
 This is a **system-level question** that tests whether you understand how JS, CSS, and HTML interact to produce pixels on screen.
 
-### **Intuition (what do we need to know?):**
+---
 
+### Intuition (what do we need to know?)
 1. The browser doesn’t directly show raw HTML text → it must **parse, compute, and render**.  
 2. Each resource (HTML, CSS, JS) can either **help** or **block** this rendering.  
 3. Understanding CRP means knowing the **steps the browser takes** before pixels show up.
 
-### **Step-by-Step Process (CRP Stages):**
+---
+
+### Step-by-Step Process (CRP Stages)
 
 1. **HTML → DOM (Document Object Model)**  
    * Browser parses HTML → creates a tree of elements.  
    * Example:
-```html
-<body>
 
- <h1>Hello</h1>
+   ```html
+   <body>
+     <h1>Hello</h1>
+   </body>
+   ```
 
-</body>
+   * DOM Tree: `Document → body → h1 → text`.
+
+---
+
+2. **CSS → CSSOM (CSS Object Model)**  
+   * Browser parses CSS → builds a tree of style rules.
+
+---
+
+3. **DOM + CSSOM → Render Tree**  
+   * Browser combines structure (DOM) and style (CSSOM).  
+   * Invisible elements (`display: none`) are skipped.
+
+---
+
+4. **Layout (Reflow)**  
+   * Browser calculates position and size of each element (box model).  
+   * Example: `h1` → (x=0, y=0, width=500px, height=50px).
+
+---
+
+5. **Paint**  
+   * Browser fills pixels (colors, borders, text, images).
+
+---
+
+6. **Composite**  
+   * Layers (e.g., CSS transforms, z-index) are drawn together into the final screen image.
+
+---
+
+### Visualization of CRP
+
 ```
-* → DOM Tree: `Document → body → h1 → text`.
-
-**2. CSS → CSSOM (CSS Object Model)**
-
-* Browser parses CSS → builds a tree of style rules.
-
-3. **DOM + CSSOM → Render Tree**
-
-* Browser combines structure (DOM) and style (CSSOM).  
-* Invisible elements (`display: none`) are skipped.
-
-4. **Layout (Reflow)**
-
-* Browser calculates position and size of each element (box model).  
-  * Example: `h1` → (x=0, y=0, width=500px, height=50px).
-
-5. **Paint**
-
-* Browser fills pixels (colors, borders, text, images).
-
-6.  **Composite**
-
-* Layers (e.g., for CSS transforms, z-index) are drawn together into the final screen image.
-
-### **Visualization of CRP**
-
 HTML → DOM
-
 CSS → CSSOM
-
 DOM + CSSOM → Render Tree
-
 Render Tree → Layout → Paint → Composite
+```
 
-### **Where is JavaScript in this?**
+---
 
-* **Blocking scripts** (`<script>`) pause HTML parsing.  
-* **Blocking CSS** (stylesheets) pause JS execution until loaded (because JS may query styles).  
-* This is why script placement and attributes (`async`, `defer`) matter so much.
+### Where is JavaScript in this?
+- **Blocking scripts** (`<script>`) pause HTML parsing.  
+- **Blocking CSS** (stylesheets) pause JS execution until loaded (because JS may query styles).  
+- This is why script placement and attributes (`async`, `defer`) matter so much.
 
-### **Optimizations (Interview Gold):**
+---
+
+### Optimizations (Interview Gold)
 
 1. **Minimize render-blocking resources**  
    * Use `async` / `defer` for scripts.  
    * Inline critical CSS, defer non-critical CSS.  
+
 2. **Reduce reflows/repaints**  
    * Batch DOM changes.  
-   * Avoid inline style changes in loops.
+   * Avoid inline style changes in loops.  
 
 3. **Optimize images**  
    * Use responsive, compressed images.  
    * Lazy load below-the-fold images.  
+
 4. **Measure with DevTools**  
    * Performance tab → see layout, paint, composite breakdown.
 
-### **Key Points:**
+---
 
-* CRP = sequence browser takes to render pixels.  
-* Steps: **DOM → CSSOM → Render Tree → Layout → Paint → Composite**.  
-* JavaScript & CSS can **block rendering**.  
-* Optimizations: async/defer, critical CSS, minimize reflows, lazy load assets.
+### Key Points
+- CRP = sequence browser takes to render pixels.  
+- Steps: **DOM → CSSOM → Render Tree → Layout → Paint → Composite**.  
+- JavaScript & CSS can **block rendering**.  
+- Optimizations: async/defer, critical CSS, minimize reflows, lazy load assets.  
 
 ## Q38. What are Web Vitals (LCP, FID, CLS) and how do you optimize them?
 
