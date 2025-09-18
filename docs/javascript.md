@@ -2008,24 +2008,26 @@ All three matter for a good dining (or browsing) experience.
 ## Q39. How does JavaScript garbage collection work?
 
 **Problem Statement:**  
- In interviews, you may be asked:  
- *“How does memory management work in JavaScript? What is garbage collection, and how does the engine decide what memory to free?”*
+In interviews, you may be asked:  
+*“How does memory management work in JavaScript? What is garbage collection, and how does the engine decide what memory to free?”*
 
 This is a **deep internals question** that tests if you understand how JS handles memory automatically and why memory leaks can still happen.
 
-### **Intuition (what do we need to know?):**
+---
 
+### Intuition (what do we need to know?)
 1. JavaScript manages memory automatically (no `malloc`/`free` like C).  
-2. But memory isn’t infinite — browser must **free objects that are no longer needed**.  
+2. But memory isn’t infinite — the browser must **free objects that are no longer needed**.  
 3. Core question: *“How does JS know an object is no longer needed?”*  
-    → Answer: **Reachability.**
+   → Answer: **Reachability.**
 
-### **Step-by-Step**
+---
 
-#### **1. Memory Lifecycle in JS**
+### Step-by-Step
 
-* Allocate → Use → Release.  
-* Example:
+#### 1. Memory Lifecycle in JS
+- **Allocate → Use → Release**
+
 ```js
 let user = { name: "Ravi" }; // allocate
 
@@ -2034,34 +2036,37 @@ console.log(user.name);      // use
 user = null;                 // release (eligible for GC)
 ```
 
-#### **Reachability Concept**
+---
 
-* An object is considered “alive” if it’s reachable from **roots**.  
-* **Roots**: global object (`window` in browsers, `global` in Node), current execution stack, and variables in closures.  
-* If an object can’t be reached → marked for deletion.
+#### 2. Reachability Concept
+- An object is considered “alive” if it’s reachable from **roots**.  
+- **Roots** include:
+  * Global object (`window` in browsers, `global` in Node)
+  * Current execution stack
+  * Variables in closures  
+- If an object can’t be reached → marked for deletion.
 
-#### **3. Mark-and-Sweep Algorithm (simplified)**
+---
 
-* Step 1: Start at roots, “mark” all reachable objects.  
-* Step 2: Sweep through heap, remove unmarked (unreachable) ones.  
-* This runs automatically, periodically.
+#### 3. Mark-and-Sweep Algorithm (simplified)
+- Step 1: Start at roots, “mark” all reachable objects.  
+- Step 2: Sweep through heap, remove unmarked (unreachable) ones.  
+- This runs automatically, periodically.
 
-#### **4. Why memory leaks still happen**
+---
 
-Even with GC, leaks happen when references are kept alive unintentionally:
+#### 4. Why memory leaks still happen
+Even with GC, leaks happen when references are kept alive unintentionally.
 
-* **Closures holding references**
+**Closures holding references**
+
 ```js
 function leaky() {
+  let bigArray = new Array(1000000).fill("data");
 
- let bigArray = new Array(1000000).fill("data");
-
- return function() {
-
-   console.log(bigArray.length); // closure keeps bigArray alive
-
- };
-
+  return function() {
+    console.log(bigArray.length); // closure keeps bigArray alive
+  };
 }
 
 const leak = leaky();
@@ -2070,6 +2075,7 @@ const leak = leaky();
 ```
 
 **Detached DOM nodes**
+
 ```js
 let el = document.getElementById("myDiv");
 
@@ -2078,7 +2084,16 @@ document.body.removeChild(el);
 // if still referenced in JS → not garbage collected
 ```
 
-* **Event listeners not removed** → DOM nodes stay alive.
+**Event listeners not removed**  
+- If event handlers stay attached, DOM nodes can’t be freed.
+
+---
+
+### Key Points
+- JS uses **automatic garbage collection**, primarily via **mark-and-sweep**.  
+- Concept of **reachability** determines what memory is freed.  
+- Memory leaks still occur if references are unintentionally retained (closures, detached DOM nodes, event listeners).
+
 
 ## Q40. Event Bubbling vs Capturing (and Event Delegation)
 
