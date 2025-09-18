@@ -736,60 +736,68 @@ function StarRating({ totalStars = 5 }) {
 ## Q17. What are Error Boundaries in React and why are they needed?
 
 **Problem Statement:**  
- Interviewers ask this to check if you know how React handles **runtime errors in components**. Many candidates confuse error boundaries with try–catch. The key is to show you understand they are **React-specific components** that catch render-time errors.
+Interviewers ask this to check if you know how React handles **runtime errors in components**. Many candidates confuse error boundaries with `try–catch`. The key is to show you understand they are **React-specific components** that catch render-time errors.
 
-**Intuition / Approach:**
+---
 
-* If a React component throws an error, by default the entire React component tree unmounts.  
-* Error Boundaries are special components that **catch errors in their child component tree** during:  
+### Intuition / Approach
+- If a React component throws an error, by default the **entire React component tree unmounts**.  
+- Error Boundaries are special components that **catch errors in their child component tree** during:  
   * Rendering  
   * Lifecycle methods  
   * Constructors  
-* They let you gracefully show a **fallback UI** instead of crashing the whole app.  
-  
-  ```js
-  class ErrorBoundary extends React.Component {  
-   constructor(props) {  
-     super(props);  
-     this.state = { hasError: false };  
-   }  
-    
-   static getDerivedStateFromError(error) {  
-     return { hasError: true }; // Update state so fallback UI is shown  
-   }  
-    
-   componentDidCatch(error, info) {  
-     console.log("Error logged:", error, info); // log error details  
-   }  
-    
-   render() {  
-     if (this.state.hasError) {  
-       return <h2>Something went wrong.</h2>;  
-     }  
-     return this.props.children;  
-   }  
-  }  
-    
-  // Usage  
-  function BuggyComponent() {  
-   throw new Error("Crashed!");  
-  }  
-    
-  function App() {  
-   return (  
-     <ErrorBoundary>  
-       <BuggyComponent />  
-     </ErrorBoundary>  
-   );  
-  }  
+- They let you gracefully show a **fallback UI** instead of crashing the whole app.  
 
+---
 
+### Example: Implementing an Error Boundary
 
-**Key Points:**
+```js
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
-* Only **class components** can be error boundaries.  
-* They catch errors from children, not themselves.  
-* They don’t catch errors in event handlers, async code, or server-side rendering.
+  static getDerivedStateFromError(error) {
+    return { hasError: true }; // Update state so fallback UI is shown
+  }
+
+  componentDidCatch(error, info) {
+    console.log("Error logged:", error, info); // log error details
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h2>Something went wrong.</h2>;
+    }
+    return this.props.children;
+  }
+}
+
+// Usage
+function BuggyComponent() {
+  throw new Error("Crashed!");
+}
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <BuggyComponent />
+    </ErrorBoundary>
+  );
+}
+```
+
+---
+
+### Key Points
+- Only **class components** can be error boundaries.  
+- They catch errors from their **children**, not themselves.  
+- They **don’t catch**:
+  * Errors in event handlers  
+  * Errors in async code (e.g., `setTimeout`)  
+  * Errors during server-side rendering  
 
 
 ## Q18. What is React Suspense and how does it work?
