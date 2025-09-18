@@ -4,4 +4,4 @@ Welcome to the TAPOVAN resources site.
 Here are the available notes:
 
 - [JavaScript Notes](./javascript.md)
-- [React Notes] (./react.md)
+- [React Notes](./react.md)
