@@ -21,23 +21,17 @@ Solution (Step-by-step):
 4. React finds the minimal number of operations needed.  
 5. It batches and applies those updates to the actual DOM.
 
+```js
 function Counter() {
-
- const \[count, setCount\] \= React.useState(0);
-
+ const [count, setCount] = React.useState(0);
  return (
-
-   \<div\>
-
-     \<p\>Count: {count}\</p\>
-
-     \<button onClick\={() \=\> setCount(count \+ 1)}\>Increment\</button\>
-
-   \</div\>
-
+   <div>
+     <p>Count: {count}</p>
+     <button onClick={() => setCount(count + 1)}>Increment</button>
+   </div>
  );
-
 }
+```
 
 * Each time you click, React **rebuilds a new VDOM tree**.  
 * Instead of repainting the whole UI, React finds that **only the `<p>` node’s text needs updating**, not the `<button>` or `<div>`.  
@@ -69,35 +63,23 @@ function Counter() {
 
 **Example:**
 
+```js
 // Parent
-
 function App() {
-
- return \<Welcome name\="Rahul" /\>;
-
+ return <Welcome name="Rahul" />;
 }
-
 // Child
-
 function Welcome({ name }) {
-
- const \[count, setCount\] \= React.useState(0);
-
+ const [count, setCount] = React.useState(0);
  return (
-
-   \<div\>
-
-     \<h1\>Hello, {name}\</h1\> {/\* prop \*/}
-
-     \<p\>You clicked {count} times\</p\> {/\* state \*/}
-
-     \<button onClick\={() \=\> setCount(count \+ 1)}\>Click\</button\>
-
-   \</div\>
-
+   <div>
+     <h1>Hello, {name}</h1> {/* prop */}
+     <p>You clicked {count} times</p> {/* state */}
+     <button onClick={() => setCount(count + 1)}>Click</button>
+   </div>
  );
-
 }
+```
 
 * `name="Rahul"` → **prop** (external, fixed unless parent changes).  
 * `count` → **state** (internal, changes via `setCount`).
@@ -122,31 +104,21 @@ function Welcome({ name }) {
 
 **Solution (Step-by-step):**
 
+```js
 import React, { useState } from "react";
-
 function Counter() {
-
- const \[count, setCount\] \= useState(0); // initialize with 0
-
- const increment \= () \=\> {
-
-   setCount(prev \=\> prev \+ 1); // functional update to avoid stale state
-
+ const [count, setCount] = useState(0); // initialize with 0
+ const increment = () => {
+   setCount(prev => prev + 1); // functional update to avoid stale state
  };
-
  return (
-
-   \<div\>
-
-     \<p\>Count is: {count}\</p\>
-
-     \<button onClick\={increment}\>Increment\</button\>
-
-   \</div\>
-
+   <div>
+     <p>Count is: {count}</p>
+     <button onClick={increment}>Increment</button>
+   </div>
  );
-
 }
+```
 
 1. `useState(0)` initializes `count` with `0`.  
 2. React internally keeps a **state cell** per hook call.  
@@ -170,36 +142,26 @@ function Counter() {
 * It can return a cleanup function to avoid memory leaks.  
 * Maps roughly to `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` in classes.
 
+```js
 import React, { useState, useEffect } from "react";
-
 function Timer() {
-
- const \[count, setCount\] \= useState(0);
-
- useEffect(() \=\> {
-
+ const [count, setCount] = useState(0);
+ useEffect(() => {
    console.log("Effect runs");
-
-   const id \= setInterval(() \=\> setCount(c \=\> c \+ 1), 1000);
-
-   return () \=\> {
-
+   const id = setInterval(() => setCount(c => c + 1), 1000);
+   return () => {
      console.log("Cleanup");
-
      clearInterval(id);
-
    };
-
- }, \[\]); // empty dependency \= run only on mount/unmount
-
- return \<p\>Timer: {count}\</p\>;
-
+ }, []); // empty dependency = run only on mount/unmount
+ return <p>Timer: {count}</p>;
 }
+```
 
 1. On first render, `useEffect` runs after the DOM is painted.  
 2. `setInterval` starts incrementing `count`.  
 3. When the component unmounts, the cleanup function clears the interval.  
-4. With `[]`, it behaves like `componentDidMount` \+ `componentWillUnmount`.  
+4. With `[]`, it behaves like `componentDidMount` + `componentWillUnmount`.  
 5. With `[count]`, it would re-run on every `count` change (like `componentDidUpdate`).
 
 **Mental Model:**  
@@ -219,27 +181,19 @@ function Timer() {
   * Attach previous state to the wrong item.  
   * Cause subtle UI inconsistencies.
 
+```js
 function TodoList({ todos }) {
-
  return (
-
-   \<ul\>
-
-     {todos.map((todo, index) \=\> (
-
-       \<li key\={index}\>
-
-         \<input defaultValue\={todo.text} /\>
-
-       \</li\>
-
+   <ul>
+     {todos.map((todo, index) => (
+       <li key={index}>
+         <input defaultValue={todo.text} />
+       </li>
      ))}
-
-   \</ul\>
-
+   </ul>
  );
-
 }
+```
 
 Suppose the list is:
 
@@ -264,27 +218,19 @@ This is a **bug caused by wrong keys** — React preserved the wrong element.
 
 Correct:
 
+```js
 function TodoList({ todos }) {
-
  return (
-
-   \<ul\>
-
-     {todos.map(todo \=\> (
-
-       \<li key\={todo.id}\>
-
-         \<input defaultValue\={todo.text} /\>
-
-       \</li\>
-
+   <ul>
+     {todos.map(todo => (
+       <li key={todo.id}>
+         <input defaultValue={todo.text} />
+       </li>
      ))}
-
-   \</ul\>
-
+   </ul>
  );
-
 }
+```
 
 ## Q6. What causes a React component to re-render, and how can you prevent unnecessary re-renders?
 
@@ -307,31 +253,22 @@ You can prevent unnecessary re-renders using:
 * `useMemo` and `useCallback` to memoize values/functions.  
 * Splitting large components into smaller one
 
-const Child \= React.memo(function Child({ value }) {
-
+```js
+const Child = React.memo(function Child({ value }) {
  console.log("Child render");
-
- return \<p\>Value: {value}\</p\>;
-
+ return <p>Value: {value}</p>;
 });
 
 function Parent() {
-
- const \[count, setCount\] \= React.useState(0);
-
+ const [count, setCount] = React.useState(0);
  return (
-
-   \<div\>
-
-     \<button onClick\={() \=\> setCount(c \=\> c \+ 1)}\>Increment\</button\>
-
-     \<Child value\="fixed" /\> {/\* Won’t re-render because props don’t change \*/}
-
-   \</div\>
-
+   <div>
+     <button onClick={() => setCount(c => c + 1)}>Increment</button>
+     <Child value="fixed" /> {/* Won’t re-render because props don’t change */}
+   </div>
  );
-
 }
+```
 
 Without `React.memo`, `Child` would re-render every time `Parent` re-renders.
 
@@ -353,37 +290,26 @@ For functions/objects passed as props, you may also need `useCallback` or `useMe
 * Best for **theme, authentication, language settings, global data**.  
 * But overusing it for frequent updates can cause **performance issues** (every consumer re-renders on change).
 
-// 1\. Create a context
-
-const ThemeContext \= React.createContext("light");
-
+```js
+// 1. Create a context
+const ThemeContext = React.createContext("light");
 function App() {
-
  return (
-
-   \<ThemeContext.Provider value\="dark"\>
-
-     \<Toolbar /\>
-
-   \</ThemeContext.Provider\>
-
+   <ThemeContext.Provider value="dark">
+     <Toolbar />
+   </ThemeContext.Provider>
  );
-
 }
 
 function Toolbar() {
-
- return \<Button /\>;
-
+ return <Button />;
 }
 
 function Button() {
-
- const theme \= React.useContext(ThemeContext);
-
- return \<button className\={theme}\>Click\</button\>;
-
+ const theme = React.useContext(ThemeContext);
+ return <button className={theme}>Click</button>;
 }
+```
 
 1. `createContext` defines the context.  
 2. `Provider` wraps components and supplies a value.  
@@ -406,45 +332,29 @@ function Button() {
 * Instead of multiple `setState` calls, you centralize updates in a reducer function.  
 * Conceptually similar to Redux (action → reducer → new state).
 
+```js
 function reducer(state, action) {
-
  switch (action.type) {
-
    case "increment":
-
-     return { count: state.count \+ 1 };
-
+     return { count: state.count + 1 };
    case "decrement":
-
-     return { count: state.count \- 1 };
-
+     return { count: state.count - 1 };
    default:
-
      return state;
-
  }
-
 }
 
 function Counter() {
-
- const \[state, dispatch\] \= React.useReducer(reducer, { count: 0 });
-
+ const [state, dispatch] = React.useReducer(reducer, { count: 0 });
  return (
-
-   \<div\>
-
-     \<p\>Count: {state.count}\</p\>
-
-     \<button onClick\={() \=\> dispatch({ type: "increment" })}\>\+\</button\>
-
-     \<button onClick\={() \=\> dispatch({ type: "decrement" })}\>\-\</button\>
-
-   \</div\>
-
+   <div>
+     <p>Count: {state.count}</p>
+     <button onClick={() => dispatch({ type: "increment" })}>+</button>
+     <button onClick={() => dispatch({ type: "decrement" })}>-</button>
+   </div>
  );
-
 }
+```
 
 1. `reducer` defines state transitions based on action type.  
 2. `useReducer` initializes state (`{ count: 0 }`).  
@@ -472,25 +382,20 @@ function Counter() {
 * If you have an **expensive calculation**, you don’t want it to run unless its inputs actually change.  
 * `useMemo` caches (memoizes) the result of a calculation and recomputes it only when dependencies change.
 
+```js
 function ExpensiveCalculation({ num }) {
-
- const compute \= (n) \=\> {
-
+ const compute = (n) => {
    console.log("Computing...");
-
-   let result \= 0;
-
-   for (let i \= 0; i \< 1e7; i++) result \+= n;
-
+   let result = 0;
+   for (let i = 0; i < 1e7; i++) result += n;
    return result;
-
  };
 
- const result \= React.useMemo(() \=\> compute(num), \[num\]);
-
- return \<p\>Result: {result}\</p\>;
-
+ const result = React.useMemo(() => compute(num), [num]);
+ return <p>Result: {result}</p>;
 }
+
+```
 
 1. Without `useMemo`, `compute(num)` runs on every render, even if `num` didn’t change.  
 2. With `useMemo`, React only recomputes when `num` changes.  
@@ -523,47 +428,33 @@ function ExpensiveCalculation({ num }) {
 * Passing a new function down as a prop can trigger **unnecessary re-renders** in memoized children.  
 * `useCallback` memoizes the function itself, ensuring its reference stays the same unless dependencies change.
 
+```js
 // // React.memo is a higher-order component that memoizes a component.
 
 // It prevents re-renders if the props haven't changed.
 
-const Child \= React.memo(({ onClick }) \=\> {
-
+const Child = React.memo(({ onClick }) => {
  console.log("Child rendered");
-
- return \<button onClick\={onClick}\>Click\</button\>;
-
+ return <button onClick={onClick}>Click</button>;
 });
 
 function Parent() {
-
- const \[count, setCount\] \= React.useState(0);
-
+ const [count, setCount] = React.useState(0);
 // Without useCallback: new function reference each render.
-
 // With useCallback: stable reference until dependencies change.
-
- const handleClick \= React.useCallback(() \=\> {
-
+ const handleClick = React.useCallback(() => {
    console.log("Clicked");
-
- }, \[\]);
+ }, []);
 
  return (
-
-   \<div\>
-
-     \<p\>Count: {count}\</p\>
-
-     \<button onClick\={() \=\> setCount(c \=\> c \+ 1)}\>Increment\</button\>
-
-     \<Child onClick\={handleClick} /\>
-
-   \</div\>
-
+   <div>
+     <p>Count: {count}</p>
+     <button onClick={() => setCount(c => c + 1)}>Increment</button>
+     <Child onClick={handleClick} />
+   </div>
  );
-
 }
+```
 
 1. Without `useCallback`, `handleClick` would be a new function each render → causing `Child` to re-render unnecessarily.  
 2. With `useCallback`, `handleClick` keeps the same reference until dependencies change.  
@@ -591,31 +482,22 @@ function Parent() {
   * Component is expensive to re-render.  
 * Not always beneficial: for small components, memoization overhead can outweigh gains.
 
-const Child \= React.memo(({ value }) \=\> {
-
+```js
+const Child = React.memo(({ value }) => {
  console.log("Child rendered");
-
- return \<p\>{value}\</p\>;
-
+ return <p>{value}</p>
 });
 
 function Parent() {
-
- const \[count, setCount\] \= React.useState(0);
-
+ const [count, setCount] = React.useState(0);
  return (
-
-   \<div\>
-
-     \<button onClick\={() \=\> setCount(c \=\> c \+ 1)}\>Increment\</button\>
-
-     \<Child value\="fixed" /\>
-
-   \</div\>
-
+   <div>
+     <button onClick={() => setCount(c => c + 1)}>Increment</button>
+     <Child value="fixed" />
+   </div>
  );
-
 }
+```
 
 1. Without `React.memo`, `Child` re-renders every time `Parent` re-renders.  
 2. With `React.memo`, `Child` skips re-rendering because its props (`"fixed"`) never change.  
@@ -640,19 +522,15 @@ function Parent() {
   3. Lists → React uses **keys** to match old vs new children efficiently.  
 * This process makes updates efficient and predictable.
 
+```js
 function Example({ isLoggedIn }) {
-
  return (
-
-   \<div\>
-
-     {isLoggedIn ? \<p\>Welcome back\!\</p\> : \<p\>Please log in.\</p\>}
-
-   \</div\>
-
+   <div>
+     {isLoggedIn ? <p>Welcome back!</p> : <p>Please log in.</p>}
+   </div>
  );
-
 }
+```
 
 If `isLoggedIn` changes from `true → false`:
 
@@ -682,69 +560,43 @@ For lists, React uses **keys** to match children (see Q5). Without correct keys,
 * Render the list with proper `key`.  
 * Implement delete functionality.
 
+```js
 import React, { useState } from "react";
-
 function TodoApp() {
-
- const \[todos, setTodos\] \= useState(\[\]);
-
- const \[text, setText\] \= useState("");
-
- const addTodo \= () \=\> {
-
-   if (\!text.trim()) return;
-
-   const newTodo \= { id: Date.now(), text };
-
-   setTodos(prev \=\> \[...prev, newTodo\]);
-
+ const [todos, setTodos] = useState([]);
+ const [text, setText] = useState("");
+ const addTodo = () => {
+   if (!text.trim()) return;
+   const newTodo = { id: Date.now(), text };
+   setTodos(prev => [...prev, newTodo]);
    setText("");
-
  };
 
- const deleteTodo \= (id) \=\> {
-
-   setTodos(prev \=\> prev.filter(todo \=\> todo.id \!== id));
-
+ const deleteTodo = (id) => {
+   setTodos(prev => prev.filter(todo => todo.id !== id));
  };
 
  return (
+   <div>
+     <input
+       value={text}
+       onChange={(e) => setText(e.target.value)}
+       placeholder="Add todo"
+     />
 
-   \<div\>
-
-     \<input
-
-       value\={text}
-
-       onChange\={(e) \=\> setText(e.target.value)}
-
-       placeholder\="Add todo"
-
-     /\>
-
-     \<button onClick\={addTodo}\>Add\</button\>
-
-     \<ul\>
-
-       {todos.map(todo \=\> (
-
-         \<li key\={todo.id}\>
-
+     <button onClick={addTodo}>Add</button>
+     <ul>
+       {todos.map(todo => (
+         <li key={todo.id}>
            {todo.text}
-
-           \<button onClick\={() \=\> deleteTodo(todo.id)}\>Delete\</button\>
-
-         \</li\>
-
+           <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+         </li>
        ))}
-
-     \</ul\>
-
-   \</div\>
-
+     </ul>
+   </div>
  );
-
 }
+```
 
 1. `text` manages input field value.  
 2. `addTodo` adds new items to the array using `id` (not index).  
@@ -770,85 +622,56 @@ function TodoApp() {
 * On submit, validate inputs and show error if invalid.  
 * Keep form updates immutable.
 
+```js
 import React, { useState } from "react";
 
 function SignupForm() {
-
- const \[form, setForm\] \= useState({ name: "", email: "" });
-
- const \[error, setError\] \= useState("");
-
- const handleChange \= (e) \=\> {
-
-   const { name, value } \= e.target;
-
-   setForm((prev) \=\> ({ ...prev, \[name\]: value }));
-
+ const [form, setForm] = useState({ name: "", email: "" });
+ const [error, setError] = useState("");
+ const handleChange = (e) => {
+   const { name, value } = e.target;
+   setForm((prev) => ({ ...prev, [name]: value }));
  };
 
- const handleSubmit \= (e) \=\> {
-
+ const handleSubmit = (e) => {
    e.preventDefault();
-
-   if (\!form.name.trim() || \!form.email.trim()) {
-
+   if (!form.name.trim() || !form.email.trim()) {
      setError("All fields are required");
-
      return;
-
    }
 
-   if (\!/\\S\+@\\S\+\\.\\S\+/.test(form.email)) {
-
+   if (!/S+@S+.S+/.test(form.email)) {
      setError("Invalid email address");
-
      return;
-
    }
 
    setError("");
-
    console.log("Form submitted:", form);
-
  };
 
  return (
+   <form onSubmit={handleSubmit}>
+     <input
+       name="name"
+       value={form.name}
+       onChange={handleChange}
+       placeholder="Name"
+     />
 
-   \<form onSubmit\={handleSubmit}\>
+     <input
+       name="email"
+       value={form.email}
+       onChange={handleChange}
+       placeholder="Email"
+     />
 
-     \<input
+     <button type="submit">Submit</button>
 
-       name\="name"
-
-       value\={form.name}
-
-       onChange\={handleChange}
-
-       placeholder\="Name"
-
-     /\>
-
-     \<input
-
-       name\="email"
-
-       value\={form.email}
-
-       onChange\={handleChange}
-
-       placeholder\="Email"
-
-     /\>
-
-     \<button type\="submit"\>Submit\</button\>
-
-     {error && \<p style\={{ color: "red" }}\>{error}\</p\>}
-
-   \</form\>
-
+     {error && <p style={{ color: "red" }}>{error}</p>}
+   </form>
  );
-
 }
+```
 
 1. Each input is controlled by `form` state (`value` comes from state, updates via `onChange`).  
 2. Validation checks for empty fields and valid email format.  
@@ -856,8 +679,8 @@ function SignupForm() {
 
 **Mental Model:**
 
-* Controlled components \= React is **the single source of truth** for form values.  
-* Pattern generalizes to: *always bind `value` \+ `onChange` for predictable form state.*
+* Controlled components = React is **the single source of truth** for form values.  
+* Pattern generalizes to: *always bind `value` + `onChange` for predictable form state.*
 
 ## Q16. Build a Star Rating Widget Component
 
@@ -871,49 +694,32 @@ function SignupForm() {
 * On click, update the rating.  
 * Conditionally highlight stars based on current rating.
 
+```js
 import React, { useState } from "react";
 
-function StarRating({ totalStars \= 5 }) {
-
- const \[rating, setRating\] \= useState(0);
-
+function StarRating({ totalStars = 5 }) {
+ const [rating, setRating] = useState(0);
  return (
-
-   \<div\>
-
-     {\[...new Array(totalStars)\].map((\_, index) \=\> (
-
-       \<span
-
-         key\={index}
-
-         onClick\={() \=\> setRating(index \+ 1)}
-
-         style\={{
-
+   <div>
+     {[...new Array(totalStars)].map((_, index) => (
+       <span
+         key={index}
+         onClick={() => setRating(index + 1)}
+         style={{
            cursor: "pointer",
-
-           color: index \< rating ? "gold" : "gray",
-
+           color: index < rating ? "gold" : "gray",
            fontSize: "24px"
-
          }}
-
-       \>
-
+       >
          ★
-
-       \</span\>
-
+       </span>
      ))}
 
-     \<p\>Rating: {rating}\</p\>
-
-   \</div\>
-
+     <p>Rating: {rating}</p>
+   </div>
  );
-
 }
+```
 
 **Step-by-step:**
 
@@ -940,10 +746,12 @@ function StarRating({ totalStars \= 5 }) {
   * Lifecycle methods  
   * Constructors  
 * They let you gracefully show a **fallback UI** instead of crashing the whole app.  
+  
+  ```js
   class ErrorBoundary extends React.Component {  
    constructor(props) {  
      super(props);  
-     this.state \= { hasError: false };  
+     this.state = { hasError: false };  
    }  
     
    static getDerivedStateFromError(error) {  
@@ -956,7 +764,7 @@ function StarRating({ totalStars \= 5 }) {
     
    render() {  
      if (this.state.hasError) {  
-       return \<h2\>Something went wrong.\</h2\>;  
+       return <h2>Something went wrong.</h2>;  
      }  
      return this.props.children;  
    }  
@@ -964,17 +772,17 @@ function StarRating({ totalStars \= 5 }) {
     
   // Usage  
   function BuggyComponent() {  
-   throw new Error("Crashed\!");  
+   throw new Error("Crashed!");  
   }  
     
   function App() {  
    return (  
-     \<ErrorBoundary\>  
-       \<BuggyComponent /\>  
-     \</ErrorBoundary\>  
+     <ErrorBoundary>  
+       <BuggyComponent />  
+     </ErrorBoundary>  
    );  
   }  
-  
+
 
 
 **Key Points:**
@@ -997,27 +805,20 @@ function StarRating({ totalStars \= 5 }) {
   * `React.lazy()` → lazy-load components.  
   * Concurrent features (e.g., future data fetching APIs).
 
-const LazyComponent \= React.lazy(() \=\> import("./LazyComponent"));
+```js
+const LazyComponent = React.lazy(() => import("./LazyComponent"));
 
 function App() {
-
  return (
-
-   \<div\>
-
-     \<h1\>App Start\</h1\>
-
-     \<React.Suspense fallback\={\<p\>Loading...\</p\>}\>
-
-       \<LazyComponent /\>
-
-     \</React.Suspense\>
-
-   \</div\>
-
+   <div>
+     <h1>App Start</h1>
+     <React.Suspense fallback={<p>Loading...</p>}>
+       <LazyComponent />
+     </React.Suspense>
+   </div>
  );
-
 }
+```
 
 `React.lazy` dynamically imports `LazyComponent`.
 
@@ -1039,21 +840,18 @@ Once ready, it replaces the fallback with the component.
   2. Storing values across renders without re-rendering.  
   3. Storing timers/intervals.
 
+```js
 import React, { useRef, useEffect } from "react";
 
 function FocusInput() {
-
- const inputRef \= useRef(null);
-
- useEffect(() \=\> {
-
+ const inputRef = useRef(null);
+ useEffect(() => {
    inputRef.current.focus(); // directly focus DOM element
+ }, []);
 
- }, \[\]);
-
- return \<input ref\={inputRef} placeholder\="Type here" /\>;
-
+ return <input ref={inputRef} placeholder="Type here" />;
 }
+```
 
 1. `useRef(null)` creates a ref object.  
 2. Attach it to an element via `ref={inputRef}`.  
@@ -1076,31 +874,23 @@ Intuition / Approach:
 * If you wrap a component (like `Input`), parent refs won’t automatically attach to the child’s DOM node.  
 * `forwardRef` lets you explicitly pass refs through components.
 
+```js
 import React, { useRef, forwardRef } from "react";
 
-const CustomInput \= forwardRef((props, ref) \=\> (
-
- \<input ref\={ref} {...props} /\>
-
+const CustomInput = forwardRef((props, ref) => (
+ <input ref={ref} {...props} />
 ));
 
 function App() {
-
- const inputRef \= useRef();
-
+ const inputRef = useRef();
  return (
-
-   \<div\>
-
-     \<CustomInput ref\={inputRef} placeholder\="Enter text" /\>
-
-     \<button onClick\={() \=\> inputRef.current.focus()}\>Focus Input\</button\>
-
-   \</div\>
-
+   <div>
+     <CustomInput ref={inputRef} placeholder="Enter text" />
+     <button onClick={() => inputRef.current.focus()}>Focus Input</button>
+   </div>
  );
-
 }
+```
 
 `CustomInput` is wrapped in `forwardRef`.
 
@@ -1125,63 +915,42 @@ Now parent can directly call `.focus()` on the child input.
 * Use `useRef` to hold the interval ID (doesn’t need to re-render when updated).  
 * `start` → create an interval if one doesn’t already exist.  
 * `stop` → clear interval and reset ref.  
-* `reset` → clear interval and reset time to 0\.
+* `reset` → clear interval and reset time to 0.
 
+```js
 import React, { useState, useRef } from "react";
 
 function Stopwatch() {
-
- const \[time, setTime\] \= useState(0);
-
- const intervalRef \= useRef(null);
-
- const start \= () \=\> {
-
-   if (intervalRef.current \!== null) return; // prevent multiple intervals
-
-   intervalRef.current \= setInterval(() \=\> {
-
-     setTime(prev \=\> prev \+ 1);
-
+ const [time, setTime] = useState(0);
+ const intervalRef = useRef(null);
+ const start = () => {
+   if (intervalRef.current !== null) return; // prevent multiple intervals
+   intervalRef.current = setInterval(() => {
+     setTime(prev => prev + 1);
    }, 1000);
-
  };
 
- const stop \= () \=\> {
-
+ const stop = () => {
    clearInterval(intervalRef.current);
-
-   intervalRef.current \= null;
-
+   intervalRef.current = null;
  };
 
- const reset \= () \=\> {
-
+ const reset = () => {
    clearInterval(intervalRef.current);
-
-   intervalRef.current \= null;
-
+   intervalRef.current = null;
    setTime(0);
-
  };
 
  return (
-
-   \<div\>
-
-     \<h2\>Time: {time}s\</h2\>
-
-     \<button onClick\={start}\>Start\</button\>
-
-     \<button onClick\={stop}\>Stop\</button\>
-
-     \<button onClick\={reset}\>Reset\</button\>
-
-   \</div\>
-
+   <div>
+     <h2>Time: {time}s</h2>
+     <button onClick={start}>Start</button>
+     <button onClick={stop}>Stop</button>
+     <button onClick={reset}>Reset</button>
+   </div>
  );
-
 }
+```
 
 **Key Points:**
 
@@ -1207,61 +976,41 @@ function Stopwatch() {
 * Use `useRef` to store the timeout ID so it can be cleared on new keystrokes.  
 * Call the “API” only when typing has paused for the debounce delay.
 
+```js
 import React, { useState, useEffect, useRef } from "react";
 
 function DebouncedSearch() {
+ const [query, setQuery] = useState("");
+ const timeoutRef = useRef(null);
 
- const \[query, setQuery\] \= useState("");
-
- const timeoutRef \= useRef(null);
-
- useEffect(() \=\> {
-
-   if (query \=== "") return;
-
+ useEffect(() => {
+   if (query === "") return;
    // clear previous timeout if user types again
-
    if (timeoutRef.current) {
-
      clearTimeout(timeoutRef.current);
-
    }
 
-   timeoutRef.current \= setTimeout(() \=\> {
-
+   timeoutRef.current = setTimeout(() => {
      console.log("API call with query:", query);
-
-     // Here you would call your API with \`query\`
-
+     // Here you would call your API with `query`
    }, 500);
 
    // cleanup on unmount
-
-   return () \=\> clearTimeout(timeoutRef.current);
-
- }, \[query\]);
+   return () => clearTimeout(timeoutRef.current);
+ }, [query]);
 
  return (
-
-   \<div\>
-
-     \<input
-
-       type\="text"
-
-       placeholder\="Search..."
-
-       value\={query}
-
-       onChange\={(e) \=\> setQuery(e.target.value)}
-
-     /\>
-
-   \</div\>
-
+   <div>
+     <input
+       type="text"
+       placeholder="Search..."
+       value={query}
+       onChange={(e) => setQuery(e.target.value)}
+     />
+   </div>
  );
-
 }
+```
 
 **Key Points:**
 
@@ -1280,69 +1029,42 @@ function DebouncedSearch() {
 * Render tab headers in a row.  
 * Highlight the active tab and show only its content.
 
+```js
 import React, { useState } from "react";
 
 function Tabs() {
-
- const \[active, setActive\] \= useState(0);
-
- const tabs \= \["Home", "Profile", "Settings"\];
-
- const content \= \[
-
+ const [active, setActive] = useState(0);
+ const tabs = ["Home", "Profile", "Settings"];
+ const content = [
    "Welcome to the Home tab",
-
    "This is your Profile tab",
-
    "Here are the Settings"
-
- \];
+ ];
 
  return (
-
-   \<div\>
-
-     {/\* Tab headers \*/}
-
-     \<div style\={{ display: "flex", gap: "10px" }}\>
-
-       {tabs.map((tab, index) \=\> (
-
-         \<button
-
-           key\={index}
-
-           onClick\={() \=\> setActive(index)}
-
-           style\={{
-
-             fontWeight: active \=== index ? "bold" : "normal"
-
+   <div>
+     {/* Tab headers */}
+     <div style={{ display: "flex", gap: "10px" }}>
+       {tabs.map((tab, index) => (
+         <button
+           key={index}
+           onClick={() => setActive(index)}
+           style={{
+             fontWeight: active === index ? "bold" : "normal"
            }}
-
-         \>
-
+         >
            {tab}
-
-         \</button\>
-
+         </button>
        ))}
-
-     \</div\>
-
-     {/\* Tab content \*/}
-
-     \<div style\={{ marginTop: "10px" }}\>
-
-       \<p\>{content\[active\]}\</p\>
-
-     \</div\>
-
-   \</div\>
-
+     </div>
+     {/* Tab content */}
+     <div style={{ marginTop: "10px" }}>
+       <p>{content[active]}</p>
+     </div>
+   </div>
  );
-
 }
+```
 
 **Key Points:**
 
@@ -1361,53 +1083,35 @@ function Tabs() {
 * When a header is clicked, toggle open/close.  
 * Render content conditionally based on active index
 
+```js
 import React, { useState } from "react";
 
 function Accordion() {
-
- const \[activeIndex, setActiveIndex\] \= useState(null);
-
- const items \= \[
-
+ const [activeIndex, setActiveIndex] = useState(null);
+ const items = [
    { title: "Section 1", content: "Content of section 1" },
-
    { title: "Section 2", content: "Content of section 2" },
-
    { title: "Section 3", content: "Content of section 3" }
+ ];
 
- \];
-
- const toggle \= (index) \=\> {
-
-   setActiveIndex(prev \=\> (prev \=== index ? null : index));
-
+ const toggle = (index) => {
+   setActiveIndex(prev => (prev === index ? null : index));
  };
 
  return (
-
-   \<div\>
-
-     {items.map((item, index) \=\> (
-
-       \<div key\={index}\>
-
-         \<h3 onClick\={() \=\> toggle(index)} style\={{ cursor: "pointer" }}\>
-
+   <div>
+     {items.map((item, index) => (
+       <div key={index}>
+         <h3 onClick={() => toggle(index)} style={{ cursor: "pointer" }}>
            {item.title}
-
-         \</h3\>
-
-         {activeIndex \=== index && \<p\>{item.content}\</p\>}
-
-       \</div\>
-
+         </h3>
+         {activeIndex === index && <p>{item.content}</p>}
+       </div>
      ))}
-
-   \</div\>
-
+   </div>
  );
-
 }
+```
 
 **Key Points:**
 
@@ -1430,93 +1134,60 @@ function Accordion() {
 * Each folder should have its own local expand/collapse state.  
 * Recursively render children when a folder is expanded.
 
+```js
 import React, { useState } from "react";
 
-const data \= {
-
+const data = {
  name: "root",
-
  isFolder: true,
-
- children: \[
-
+ children: [
    {
-
      name: "src",
-
      isFolder: true,
-
-     children: \[
-
+     children: [
        { name: "index.js", isFolder: false },
-
        { name: "App.js", isFolder: false }
-
-     \]
-
+     ]
    },
-
    {
-
      name: "public",
-
      isFolder: true,
-
-     children: \[
-
+     children: [
        { name: "index.html", isFolder: false }
-
-     \]
-
+     ]
    },
-
    { name: "package.json", isFolder: false }
-
- \]
-
+ ]
 };
 
 function Explorer({ node }) {
-
- const \[expanded, setExpanded\] \= useState(false);
-
- if (\!node.isFolder) {
-
-   return \<p style\={{ marginLeft: "20px" }}\>📄 {node.name}\</p\>;
-
+ const [expanded, setExpanded] = useState(false);
+ if (!node.isFolder) {
+   return <p style={{ marginLeft: "20px" }}>📄 {node.name}</p>;
  }
 
  return (
-
-   \<div style\={{ marginLeft: "20px" }}\>
-
-     \<p onClick\={() \=\> setExpanded(prev \=\> \!prev)} style\={{ cursor: "pointer" }}\>
-
+   <div style={{ marginLeft: "20px" }}>
+     <p onClick={() => setExpanded(prev => !prev)} style={{ cursor: "pointer" }}>
        {expanded ? "📂" : "📁"} {node.name}
-
-     \</p\>
+     </p>
 
      {expanded &&
-
-       node.children.map((child, index) \=\> (
-
-         \<Explorer key\={index} node\={child} /\>
-
+       node.children.map((child, index) => (
+         <Explorer key={index} node={child} />
        ))}
 
-   \</div\>
-
+   </div>
  );
-
 }
 
 function FileExplorerApp() {
-
- return \<Explorer node\={data} /\>;
-
+ return <Explorer node={data} />;
 }
 
 export default FileExplorerApp;
+
+```
 
 **How It Works:**
 
@@ -1542,15 +1213,15 @@ export default FileExplorerApp;
 
 Hacker News Job APIs:
 
-1. **Fetch job IDs \- [https://hacker-news.firebaseio.com/v0/jobstories.json](https://hacker-news.firebaseio.com/v0/jobstories.json)**  
+1. **Fetch job IDs - [https://hacker-news.firebaseio.com/v0/jobstories.json](https://hacker-news.firebaseio.com/v0/jobstories.json)**  
    1. **Returns an array of job IDs.**  
-2. **Fetch job details by ID \- [https://hacker-news.firebaseio.com/v0/item/{id}.json](https://hacker-news.firebaseio.com/v0/item/{id}.json)**
+2. **Fetch job details by ID - [https://hacker-news.firebaseio.com/v0/item/{id}.json](https://hacker-news.firebaseio.com/v0/item/{id}.json)**
 
 Display jobs in a list with title, author, and link.
 
 Show loading and error states.
 
-Implement a “Load More” button to load jobs in batches of 10\. The button should hide when there are no more jobs to load.
+Implement a “Load More” button to load jobs in batches of 10. The button should hide when there are no more jobs to load.
 
 **Intuition / Approach:**
 
@@ -1561,193 +1232,117 @@ Implement a “Load More” button to load jobs in batches of 10\. The button sh
 * Use a **functional update** for `setJobs` to avoid stale closures.  
 * Track `fetchingJobDetails` to prevent double fetches and manage button state.
 
+```js
 import React, { useEffect, useRef, useState } from "react";
 
-const PAGE\_SIZE \= 6;
+const PAGE_SIZE = 6;
 
 function JobBoard() {
-
- const \[jobIds, setJobIds\] \= useState(null);
-
- const \[jobs, setJobs\] \= useState(\[\]);
-
- const \[page, setPage\] \= useState(0);
-
- const \[fetchingJobDetails, setFetchingJobDetails\] \= useState(false);
-
- const \[error, setError\] \= useState(null);
-
- const isMounted \= useRef(true);
+ const [jobIds, setJobIds] = useState(null);
+ const [jobs, setJobs] = useState([]);
+ const [page, setPage] = useState(0);
+ const [fetchingJobDetails, setFetchingJobDetails] = useState(false);
+ const [error, setError] = useState(null);
+ const isMounted = useRef(true);
 
  // Handle component unmount
 
- useEffect(() \=\> {
-
-   isMounted.current \= true;
-
-   return () \=\> {
-
-     isMounted.current \= false;
-
+ useEffect(() => {
+   isMounted.current = true;
+   return () => {
+     isMounted.current = false;
    };
-
- }, \[\]);
+ }, []);
 
  // Fetch jobs whenever page changes
 
- useEffect(() \=\> {
-
+ useEffect(() => {
    fetchJobs(page);
-
    // eslint-disable-next-line react-hooks/exhaustive-deps
-
- }, \[page\]);
+ }, [page]);
 
  async function fetchJobIds(currPage) {
-
-   let ids \= jobIds;
-
-   if (\!ids) {
-
+   let ids = jobIds;
+   if (!ids) {
      try {
-
-       const res \= await fetch(
-
+       const res = await fetch(
          "https://hacker-news.firebaseio.com/v0/jobstories.json"
-
        );
-
-       ids \= await res.json();
-
-       if (\!isMounted.current) return;
-
+       ids = await res.json();
+       if (!isMounted.current) return;
        setJobIds(ids);
-
      } catch (err) {
-
-       setError("Failed to load job IDs: " \+ err.message);
-
-       return \[\];
-
+       setError("Failed to load job IDs: " + err.message);
+       return [];
      }
-
    }
 
-   const start \= currPage \* PAGE\_SIZE;
-
-   const end \= start \+ PAGE\_SIZE;
-
+   const start = currPage * PAGE_SIZE;
+   const end = start + PAGE_SIZE;
    return ids.slice(start, end);
-
  }
 
  async function fetchJobs(currPage) {
-
-   const jobIdsForPage \= await fetchJobIds(currPage);
-
-   if (\!jobIdsForPage.length) return;
-
+   const jobIdsForPage = await fetchJobIds(currPage);
+   if (!jobIdsForPage.length) return;
    try {
-
      setFetchingJobDetails(true);
-
-     const jobsForPage \= await Promise.all(
-
-       jobIdsForPage.map((jobId) \=\>
-
+     const jobsForPage = await Promise.all(
+       jobIdsForPage.map((jobId) =>
          fetch(
-
-           \`https://hacker-news.firebaseio.com/v0/item/${jobId}.json\`
-
-         ).then((res) \=\> res.json())
-
+           `https://hacker-news.firebaseio.com/v0/item/${jobId}.json`
+         ).then((res) => res.json())
        )
-
      );
+     if (!isMounted.current) return;
 
-     if (\!isMounted.current) return;
-
-     setJobs((prev) \=\> \[...prev, ...jobsForPage\]); // functional update
-
+     setJobs((prev) => [...prev, ...jobsForPage]); // functional update
    } catch (err) {
-
-     setError("Failed to load jobs: " \+ err.message);
-
+     setError("Failed to load jobs: " + err.message);
    } finally {
-
      if (isMounted.current) {
-
        setFetchingJobDetails(false);
-
      }
-
    }
-
  }
 
- if (error) return \<p style\={{ color: "red" }}\>{error}\</p\>;
+ if (error) return <p style={{ color: "red" }}>{error}</p>;
 
- if (jobIds \== null) return \<p\>Loading job IDs...\</p\>;
+ if (jobIds == null) return <p>Loading job IDs...</p>;
 
  return (
-
-   \<div className\="app"\>
-
-     \<h1\>Hacker News Job Board\</h1\>
-
-     \<div className\="jobs" role\="list"\>
-
-       {jobs.map((job) \=\> (
-
-         \<div key\={job.id} className\="job-posting"\>
-
-           \<h3\>{job.title}\</h3\>
-
-           \<p\>Posted by: {job.by}\</p\>
-
+   <div className="app">
+     <h1>Hacker News Job Board</h1>
+     <div className="jobs" role="list">
+       {jobs.map((job) => (
+         <div key={job.id} className="job-posting">
+           <h3>{job.title}</h3>
+           <p>Posted by: {job.by}</p>
            {job.url && (
-
-             \<a href\={job.url} target\="\_blank" rel\="noreferrer"\>
-
+             <a href={job.url} target="_blank" rel="noreferrer">
                View Job
-
-             \</a\>
-
+             </a>
            )}
-
-         \</div\>
-
+         </div>
        ))}
+     </div>
 
-     \</div\>
-
-     {jobs.length \> 0 &&
-
-       page \* PAGE\_SIZE \+ PAGE\_SIZE \< jobIds.length && (
-
-         \<button
-
-           className\="load-more-button"
-
-           disabled\={fetchingJobDetails}
-
-           onClick\={() \=\> setPage((prev) \=\> prev \+ 1)}
-
-         \>
-
+     {jobs.length > 0 &&
+       page * PAGE_SIZE + PAGE_SIZE < jobIds.length && (
+         <button
+           className="load-more-button"
+           disabled={fetchingJobDetails}
+           onClick={() => setPage((prev) => prev + 1)}
+         >
            {fetchingJobDetails ? "Loading..." : "Load More"}
-
-         \</button\>
-
+         </button>
        )}
-
-   \</div\>
-
+   </div>
  );
-
 }
 
 export default JobBoard;
+```
 
 **Key Points in This Solution:**
 
@@ -1772,7 +1367,7 @@ export default JobBoard;
    * `useCallback` and `useMemo` for stable function and value references.  
    * Proper use of keys in lists.  
 2. **Reducing bundle size / load time**  
-   * Code splitting with `React.lazy` \+ `Suspense`.  
+   * Code splitting with `React.lazy` + `Suspense`.  
    * Dynamic imports.  
    * Tree shaking and avoiding unused libraries.  
 3. **Efficient UI rendering**  
@@ -1799,7 +1394,7 @@ export default JobBoard;
 
 **Intuition / Approach:**
 
-* **Context \+ useReducer** works fine for small apps.  
+* **Context + useReducer** works fine for small apps.  
 * But for large-scale apps:  
   1. **Re-render issues** – Context makes every consumer re-render when value changes.  
   2. **DevTools/debugging** – Redux has time-travel debugging, action logging, and middleware.  
@@ -1809,7 +1404,7 @@ export default JobBoard;
 
 **Solution (Step-by-step):**
 
-* Context \+ useReducer is like **manual wiring** of global state.  
+* Context + useReducer is like **manual wiring** of global state.  
 * Redux adds:  
   * A **centralized store**.  
   * **Middleware** for async/side effects.  
@@ -1818,7 +1413,7 @@ export default JobBoard;
 
 **Mental Model:**
 
-* Generalize: *Context/useReducer \= good for small apps. Redux \= designed for complex apps where state management, debugging, and middleware support are critical.*
+* Generalize: *Context/useReducer = good for small apps. Redux = designed for complex apps where state management, debugging, and middleware support are critical.*
 
 ## Q30. What are the benefits of Redux Toolkit over plain Redux?
 
@@ -1833,37 +1428,30 @@ export default JobBoard;
   3. Verbose setup.  
 * Redux Toolkit solves this with:  
   1. **`configureStore`** – sets up store with DevTools and middleware automatically.  
-  2. **`createSlice`** – generates actions \+ reducers together.  
+  2. **`createSlice`** – generates actions + reducers together.  
   3. **Immer.js under the hood** – lets you write “mutating” logic safely (immutability handled internally).  
   4. **Thunks built-in** – `createAsyncThunk` simplifies async logic.
 
+```js
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 
-// Slice \= reducer \+ actions
+// Slice = reducer + actions
 
-const counterSlice \= createSlice({
-
+const counterSlice = createSlice({
  name: "counter",
-
  initialState: { value: 0 },
-
  reducers: {
-
-   increment: (state) \=\> { state.value \+= 1 },  // immer lets us mutate
-
-   decrement: (state) \=\> { state.value \-= 1 }
-
+   increment: (state) => { state.value += 1 },  // immer lets us mutate
+   decrement: (state) => { state.value -= 1 }
  }
-
 });
 
-export const { increment, decrement } \= counterSlice.actions;
+export const { increment, decrement } = counterSlice.actions;
 
-const store \= configureStore({
-
+const store = configureStore({
  reducer: { counter: counterSlice.reducer }
-
 });
+```
 
 * No manual action types.  
 * No boilerplate reducers.  
@@ -1872,8 +1460,8 @@ const store \= configureStore({
 
 **Mental Model:**
 
-* Plain Redux \= verbose manual setup.  
-* RTK \= batteries included, less code, more readable, safe immutability.
+* Plain Redux = verbose manual setup.  
+* RTK = batteries included, less code, more readable, safe immutability.
 
 ## 
 
@@ -1890,23 +1478,19 @@ const store \= configureStore({
    * No boilerplate — just functions and hooks.  
    * Selectors prevent unnecessary re-renders.
 
+```js
 import create from 'zustand';
 
-const useStore \= create(set \=\> ({
-
+const useStore = create(set => ({
  count: 0,
-
- increment: () \=\> set(state \=\> ({ count: state.count \+ 1 }))
-
+ increment: () => set(state => ({ count: state.count + 1 }))
 }));
 
 function Counter() {
-
- const { count, increment } \= useStore();
-
- return \<button onClick\={increment}\>{count}\</button\>;
-
+ const { count, increment } = useStore();
+ return <button onClick={increment}>{count}</button>;
 }
+```
 
 1. **Recoil (by Facebook/Meta)**  
    * State is split into **atoms** (pieces of state).  
@@ -1917,7 +1501,7 @@ function Counter() {
    * Reactively updates components when observed state changes.  
    * More implicit than Redux (less boilerplate, but harder to debug sometimes).  
 3. **XState**  
-   * State machine \+ statecharts.  
+   * State machine + statecharts.  
    * Explicit states and transitions → good for workflows (wizards, forms, multi-step flows).
 
 **Solution (Interview Answer):**
@@ -1929,7 +1513,7 @@ function Counter() {
 
 **Mental Model:**
 
-* Generalize: *Redux \= structured and verbose, great for large apps. Alternatives like Zustand, Recoil, MobX, and XState trade boilerplate for simplicity or special use cases.*
+* Generalize: *Redux = structured and verbose, great for large apps. Alternatives like Zustand, Recoil, MobX, and XState trade boilerplate for simplicity or special use cases.*
 
 ## Q32. Explain how Redux works internally (Action → Reducer → Store → UI update)
 
@@ -1944,33 +1528,25 @@ function Counter() {
 3. **Reducer returns new state** – Redux replaces the old state with the new one.  
 4. **Store notifies subscribers** – components that are connected to the store (via `useSelector` or `connect`) re-render with the new state.
 
+```js
 // actions are plain JS objects
-
-const increment \= () \=\> ({ type: "INCREMENT" });
+const increment = () => ({ type: "INCREMENT" });
 
 // reducer is a pure function
-
-function counterReducer(state \= { value: 0 }, action) {
-
+function counterReducer(state = { value: 0 }, action) {
  switch (action.type) {
-
    case "INCREMENT":
-
-     return { value: state.value \+ 1 };
-
+     return { value: state.value + 1 };
    default:
-
      return state;
-
  }
-
 }
 
 // store holds global state
 
 import { createStore } from "redux";
 
-const store \= createStore(counterReducer);
+const store = createStore(counterReducer);
 
 // UI dispatches an action
 
@@ -1979,11 +1555,12 @@ store.dispatch(increment());
 // store calls reducer → updates state
 
 console.log(store.getState()); // { value: 1 }
+```
 
 **Step-by-step flow explained:**
 
 1. User clicks “+” → `dispatch({ type: "INCREMENT" })`.  
-2. Store passes the current state \+ action to the reducer.  
+2. Store passes the current state + action to the reducer.  
 3. Reducer returns `{ value: state.value + 1 }`.  
 4. Store updates its state.  
 5. Components subscribed to the store re-render with the new value.
@@ -1997,7 +1574,7 @@ console.log(store.getState()); // { value: 1 }
 ## Q33. What is Concurrent Rendering in React and why is it important?
 
 **Problem Statement:**  
- React introduced concurrent rendering features starting with React 18\. Interviewers ask this to test if you understand how React improves performance and user experience by rendering work in a more **interruptible, prioritized** way.
+ React introduced concurrent rendering features starting with React 18. Interviewers ask this to test if you understand how React improves performance and user experience by rendering work in a more **interruptible, prioritized** way.
 
 **Intuition / Approach:**
 
@@ -2009,59 +1586,37 @@ console.log(store.getState()); // { value: 1 }
   2. **Transitions** (mark updates as non-urgent)  
   3. **Suspense improvements**
 
+```js
 import React, { useState, startTransition } from "react";
 
 function SearchApp() {
-
- const \[query, setQuery\] \= useState("");
-
- const \[results, setResults\] \= useState(\[\]);
-
+ const [query, setQuery] = useState("");
+ const [results, setResults] = useState([]);
  function handleChange(e) {
-
-   const value \= e.target.value;
-
+   const value = e.target.value;
    setQuery(value);
-
    // mark expensive update as non-urgent
-
-   startTransition(() \=\> {
-
-     const filtered \= Array(5000)
-
+   startTransition(() => {
+     const filtered = Array(5000)
        .fill("item")
-
-       .map((v, i) \=\> v \+ i)
-
-       .filter((item) \=\> item.includes(value));
-
+       .map((v, i) => v + i)
+       .filter((item) => item.includes(value));
      setResults(filtered);
-
    });
-
  }
 
  return (
-
-   \<div\>
-
-     \<input value\={query} onChange\={handleChange} /\>
-
-     \<ul\>
-
-       {results.map((r, i) \=\> (
-
-         \<li key\={i}\>{r}\</li\>
-
+   <div>
+     <input value={query} onChange={handleChange} />
+     <ul>
+       {results.map((r, i) => (
+         <li key={i}>{r}</li>
        ))}
-
-     \</ul\>
-
-   \</div\>
-
+     </ul>
+   </div>
  );
-
 }
+```
 
 * Typing in the input is urgent → React updates `query` immediately.  
 * Filtering 5000 items is heavy → wrapped in `startTransition`, so React may delay/resume it without blocking typing.
@@ -2084,45 +1639,31 @@ function SearchApp() {
 * Outside React (like `setTimeout`, `Promise.then`), updates caused multiple renders.  
 * React 18 introduced **automatic batching everywhere**.
 
+```js
 import React, { useState, useEffect } from "react";
 
 function BatchingDemo() {
-
- const \[count, setCount\] \= useState(0);
-
- const \[flag, setFlag\] \= useState(false);
-
- useEffect(() \=\> {
-
-   setTimeout(() \=\> {
-
+ const [count, setCount] = useState(0);
+ const [flag, setFlag] = useState(false);
+ useEffect(() => {
+   setTimeout(() => {
      console.log("Before updates");
-
-     setCount(c \=\> c \+ 1);
-
-     setFlag(f \=\> \!f);
-
+     setCount(c => c + 1);
+     setFlag(f => !f);
      console.log("After updates");
-
    }, 1000);
-
- }, \[\]);
+ }, []);
 
  console.log("Component rendered");
 
  return (
-
-   \<div\>
-
-     \<p\>Count: {count}\</p\>
-
-     \<p\>Flag: {flag.toString()}\</p\>
-
-   \</div\>
-
+   <div>
+     <p>Count: {count}</p>
+     <p>Flag: {flag.toString()}</p>
+   </div>
  );
-
 }
+```
 
 **What happens in different React versions?**
 
@@ -2148,39 +1689,30 @@ function BatchingDemo() {
 * Clean up the listener on unmount.  
 * Return the dimensions from the hook.
 
+```js
 import { useState, useEffect } from "react";
 
 // Custom hook
 
 function useWindowSize() {
-
- const \[size, setSize\] \= useState({
-
+ const [size, setSize] = useState({
    width: window.innerWidth,
-
    height: window.innerHeight
-
  });
 
- useEffect(() \=\> {
-
+ useEffect(() => {
    function handleResize() {
-
      setSize({
-
        width: window.innerWidth,
-
        height: window.innerHeight
-
      });
-
    }
 
    window.addEventListener("resize", handleResize);
 
-   return () \=\> window.removeEventListener("resize", handleResize);
+   return () => window.removeEventListener("resize", handleResize);
 
- }, \[\]);
+ }, []);
 
  return size;
 
@@ -2189,20 +1721,14 @@ function useWindowSize() {
 // Usage
 
 function App() {
-
- const { width, height } \= useWindowSize();
-
+ const { width, height } = useWindowSize();
  return (
-
-   \<p\>
-
+   <p>
      Window size: {width} x {height}
-
-   \</p\>
-
+   </p>
  );
-
 }
+```
 
 **Key Points:**
 
@@ -2212,7 +1738,7 @@ function App() {
 
 **Mental Model:**
 
-* Generalize: *Custom hooks \= extract reusable logic that uses hooks.*
+* Generalize: *Custom hooks = extract reusable logic that uses hooks.*
 
 ## Q36. Build a Table Component with Pagination
 
@@ -2225,103 +1751,63 @@ function App() {
 * Slice the data array based on `currentPage` and `pageSize`.  
 * Disable “Prev” on the first page and “Next” on the last page.
 
+```js
 import React, { useState } from "react";
 
-function TableWithPagination({ data, pageSize \= 5 }) {
-
- const \[page, setPage\] \= useState(0);
-
- const start \= page \* pageSize;
-
- const end \= start \+ pageSize;
-
- const paginatedData \= data.slice(start, end);
-
+function TableWithPagination({ data, pageSize = 5 }) {
+ const [page, setPage] = useState(0);
+ const start = page * pageSize;
+ const end = start + pageSize;
+ const paginatedData = data.slice(start, end);
  return (
-
-   \<div\>
-
-     \<table border\="1" cellPadding\="5"\>
-
-       \<thead\>
-
-         \<tr\>
-
-           \<th\>ID\</th\>
-
-           \<th\>Name\</th\>
-
-         \</tr\>
-
-       \</thead\>
-
-       \<tbody\>
-
-         {paginatedData.map((item) \=\> (
-
-           \<tr key\={item.id}\>
-
-             \<td\>{item.id}\</td\>
-
-             \<td\>{item.name}\</td\>
-
-           \</tr\>
-
+   <div>
+     <table border="1" cellPadding="5">
+       <thead>
+         <tr>
+           <th>ID</th>
+           <th>Name</th>
+         </tr>
+       </thead>
+       <tbody>
+         {paginatedData.map((item) => (
+           <tr key={item.id}>
+             <td>{item.id}</td>
+             <td>{item.name}</td>
+           </tr>
          ))}
-
-       \</tbody\>
-
-     \</table\>
-
-     \<div style\={{ marginTop: "10px" }}\>
-
-       \<button onClick\={() \=\> setPage(p \=\> p \- 1)} disabled\={page \=== 0}\>
-
+       </tbody>
+     </table>
+     <div style={{ marginTop: "10px" }}>
+       <button onClick={() => setPage(p => p - 1)} disabled={page === 0}>
          Prev
-
-       \</button\>
-
-       \<span style\={{ margin: "0 10px" }}\>
-
-         Page {page \+ 1} of {Math.ceil(data.length / pageSize)}
-
-       \</span\>
-
-       \<button
-
-         onClick\={() \=\> setPage(p \=\> p \+ 1)}
-
-         disabled\={end \>= data.length}
-
-       \>
-
+       </button>
+       <span style={{ margin: "0 10px" }}>
+         Page {page + 1} of {Math.ceil(data.length / pageSize)}
+       </span>
+       <button
+         onClick={() => setPage(p => p + 1)}
+         disabled={end >= data.length}
+       >
          Next
-
-       \</button\>
-
-     \</div\>
-
-   \</div\>
-
+       </button>
+     </div>
+   </div>
  );
-
 }
 
 // Example usage
 
-const sampleData \= Array.from({ length: 22 }, (\_, i) \=\> ({
-
- id: i \+ 1,
-
- name: \`Item ${i \+ 1}\`
-
+const sampleData = Array.from({ length: 22 }, (_, i) => ({
+ id: i + 1,
+ name: `Item ${i + 1}`
 }));
 
 export default function App() {
 
- return \<TableWithPagination data\={sampleData} pageSize\={5} /\>;
+ return <TableWithPagination data={sampleData} pageSize={5} />;
 
 }
+```
 
 **Key Points:**
 
@@ -2332,5 +1818,5 @@ export default function App() {
 
 **Mental Model:**
 
-* Generalize: *Pagination \= slice(start, end) based on page × pageSize.*
+* Generalize: *Pagination = slice(start, end) based on page × pageSize.*
 
